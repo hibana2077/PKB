@@ -168,8 +168,14 @@ def main():
     optimizer = build_optimizer(args, model)
     loader_train = DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, pin_memory=True)
     loader_val = DataLoader(val_set, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, pin_memory=True)
-    print(f"Training Data count: {len(loader_train.dataset)}")
-    print(f"Validation Data count: {len(loader_val.dataset)}")
+    base_train = len(loader_train.dataset)
+    base_val = len(loader_val.dataset)
+    if args.augmentation == 'pkb' and args.pkb_views > 1:
+        effective_train = base_train * args.pkb_views
+        print(f"Training Data count: {base_train} (base images) | Effective views per epoch: {effective_train}")
+    else:
+        print(f"Training Data count: {base_train}")
+    print(f"Validation Data count: {base_val}")
     best_top1 = 0.0; history = []
     for epoch in range(1, args.epochs+1):
         adjust_lr(optimizer, epoch-1, args)
