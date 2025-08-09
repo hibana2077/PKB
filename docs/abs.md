@@ -1,0 +1,230 @@
+# MARKDOWN 概述
+
+**題目（WACV/UFGVC, 小而完整）**
+**PatchKeep-Blur (PKB):「保留清晰子塊」的部分模糊增強，用於超微細粒度葉片分類**
+
+**任務與資料集**
+
+* Ultra-Fine-Grained Visual Categorization（UFGVC）。主資料集以 **UFG-Cotton80** 為核心：80 類、訓練 240／測試 240（等價於每類訓練 3 張、測試 3 張），另可選 **UFG-SoyLocal** 作補充（200 類、訓練 600／測試 600）。&#x20;
+* UFG 的小樣本子集（含 Cotton80、SoyLocal）同時面臨**類內差異大**、**類間差異小**與**過擬合風險**；Cotton80 還常見**掌狀葉自重疊**難題。
+
+**核心想法（機制）**
+將影像切成 $n \times n$ 子塊，隨機選擇 $a$ 個子塊做**高斯模糊**（而非抹除），其餘子塊保持清晰；約束 $0 < a < n^2$ 以確保至少一部分區域是清楚的。此「保留清晰子塊」的**部分模糊增強**（PKB）保留整體低頻形狀與色彩，但破壞局部高頻脈絡（如細部葉脈紋理），迫使模型在多個清晰子塊間整合證據、對局部遮擋/自重疊與掃描雜訊更具韌性。相較於 Cutout/Random Erasing（直接抹除）、DCL/MaskCOV（打亂/遮罩+自監督任務），PKB**不引入新的預測頭**與損失，只是**可插拔**的增強策略；與 MaskCOV/DCL/CLE-ViT 的差異見下文。 &#x20;
+
+---
+
+## Hypothesis Card
+
+**機制直覺**
+
+* UFG 小樣本下，模型易過度依賴少數高頻線索（葉脈/缺刻），導致測試時脆弱。對部分子塊進行模糊能**抑制過擬合於單一局部**，促進**多處局部一致性**與**跨子塊整合**。
+* 與「抹除」不同，**模糊保留低頻形狀**，因此學到的是「在某些區域細節缺失時仍能辨識」的**條件式不變性**。
+
+**可被否證的預測（皆需多種子平均與信賴區間）**
+
+1. 在 **Cotton80** 以 ResNet-50（或官方基線相近配置）訓練時，**PKB+標準增強** 相較於 **強基線**（Cutout、DCL、MaskCOV）在 **Acc\@1 / Acc\@5 / Macro-F1** 上**達成正向的、統計上顯著**的提升；若以同等「增強次數/像素受擾比例」對齊，PKB 仍優於「抹除式」增強（Cutout/RE）。
+2. 提升幅度在**低樣本**（每類 3 張）下最大；當 $a/n^2$ 過高（過度模糊）或過低（幾無作用）時，效果退化，呈現倒 U 形。
+3. CAM 熱區更分散且覆蓋多個清晰子塊（以**分散度指標**定量），對自重疊葉片的錯誤率下降（以標註自重疊樣例子集/或啟發式篩選評估）。
+
+> 若 1) 未成立，則**反證**：PKB 未提供超過現有遮罩/打亂類方法的額外歸納偏置。
+
+**關鍵混淆因素與 Null Baselines**
+
+* **模糊總量**（等效受擾像素比例）vs **子塊分佈**（分散/連通）、**模糊強度**（$\sigma$）、**核大小**、**n 與 a 的組合**。
+* **Null-1（面積對齊的整圖模糊）**：以全圖高斯模糊強度調至與 PKB 相同「高頻能量損失」。
+* **Null-2（抹除對照）**：同 $n,a$ 下用 Cutout/RE 將 $a$ 個子塊置零或均值色塊。
+* **Null-3（連通塊對照）**：將 $a$ 個子塊連成單一大區，檢驗「分散 vs. 連通」之影響。
+* **強基線**：ResNet-50 標準訓練、Cutout/DCL/MaskCOV；可選 CLE-ViT（transformer+對比自監督）作上限參考。   &#x20;
+
+**升級門檻（Go/No-Go）**
+
+* 以 5 seeds 重複：若 PKB 相對「最佳強基線」的 **Acc\@1（或 Macro-F1）提升之 95% CI 下限 > 0**，或在**等訓練預算**下降低錯誤率的**統計顯著**差距，則升級至更大模型（DeiT/Swin）與更大子集（SoyGlobal 子集抽樣）。反之進入 **Kill or Pivot**：轉向**注意力導引的子塊選擇**或與 DCL/MaskCOV 的**混合增強**。
+
+---
+
+## Feasibility & Sanity Checks
+
+**玩具/合成測試（可解可驗）**
+
+* **條紋頻帶合成集**：生成具有不同頻帶（高頻葉脈 vs 低頻輪廓）的二類合成圖；在等面積受擾下比較「整圖模糊 vs PKB」之分類性能。**預期**：PKB 在保留多處未模糊子塊時保持正確率，而整圖模糊更易崩潰。**失敗訊號**：PKB 與整圖模糊表現一致 ⇒ 機制假說不成立（模型不靠高頻）。
+* **MNIST-patch（快速冒煙測試）**：對手寫數字切塊+部分模糊；**預期**：Acc 對 $a/n^2$ 呈倒 U 形。
+
+**真實數據快速檢核**
+
+* 在 **Cotton80** 以 ResNet-50、官方常用訓練長度與影像處理配置（440→384）跑 20% 訓練步數的小實驗：觀察 validation Acc 曲線早期是否優於 Null-2（抹除）。若無差異，優先調整 $\sigma$、子塊連通度與分散度。
+
+---
+
+## 與現有研究之區別
+
+* **Cutout/Hide-and-Seek/RE**：直接**移除**或隱藏像素；**PKB** 改為**模糊**，保留低頻結構，明確訓練「細節缺失容忍」。
+* **DCL/MaskCOV**：透過**區塊打亂/遮罩 + 輔助預測任務**學到部位敏感特徵；**PKB** 無需額外頭或損失，僅作資料層介入，與 DCL/MaskCOV **可並用**。
+* **CLE-ViT**：引入**實例級對比學習**與遮罩打亂的正負對，偏模型/目標層設計；**PKB** 聚焦資料層、通用、低成本，可作其**前置視圖生成器**（生成「模糊視圖」作正對）。&#x20;
+
+---
+
+## 報告骨架（建議）
+
+1. **問題設定**：UFG 小樣本與 Cotton80 挑戰（自重疊、類間小、類內大）；每類訓練僅 3 張。&#x20;
+2. **方法概述圖（文字描述）**：
+
+   * 輸入影像 → 切為 $n \times n$ 子塊 → 隨機挑選 $a$ 子塊做高斯模糊（$\sigma$、核大小可控；支援分散或連通策略）→ 與標準增強串接 → 常規分類器（ResNet/DeiT）。
+3. **實驗表格欄位**：
+
+   * Dataset / Model / Aug（Std / Cutout / DCL / MaskCOV / **PKB**）/ $n$、$a/n^2$、$\sigma$、分散/連通 / Acc\@1 / Acc\@5 / Macro-F1 / #epochs / FLOPs / Params / **Avg±95%CI**（多種子）。
+4. **失敗案例呈現**：
+
+   * 圖示：PKB 導致**關鍵紋理被過度模糊**而誤判；附 CAM 熱圖與子塊遮罩疊圖；逐例註明 $n,a,\sigma$ 與真值/預測。
+5. **消融**：
+
+   * $n$、$a$、$\sigma$、分散 vs 連通、與 Cutout/整圖模糊/MaskCOV/DCL 對照；在 **等受擾像素比例** 與 **等訓練預算** 下比較。
+6. **統計與重現性**：5 seeds、固定隨機種子、版本與超參設定檔、code release。
+
+---
+
+# YAML 實驗計畫
+
+```yaml
+project: PatchKeep-Blur_UFGVC
+datasets:
+  - name: UFG-Cotton80
+    train_images: 240
+    test_images: 240
+    num_classes: 80
+    note: "每類訓練3張，測試3張"
+  - name: UFG-SoyLocal
+    train_images: 600
+    test_images: 600
+    num_classes: 200
+splits:
+  protocol: "沿用官方：類內隨機對半；Cotton80 固定 3:3"
+preprocess:
+  resize_pad_square: 440
+  train_crop: 384
+  test_resize: 384
+  color_jitter: true
+  random_flip: true
+models:
+  - resnet50_sgd_160ep_bs16_lr1e-3
+  - +dcl_head_resnet50
+  - +maskcov_resnet50
+  - optional: deit_small_adamw
+metrics:
+  - top1
+  - top5
+  - macro_f1
+  - ci_95: "bootstrap 10k on測試集（按類均衡）"
+augmentation:
+  standard: ["flip", "color-jitter", "random-rotate", "random-crop"]
+  pkb:
+    n: [2, 3, 4, 5]
+    a_fraction: [0.10, 0.20, 0.30]
+    sigma: [1.0, 2.0, 3.0, 4.0]
+    kernel: ["gaussian", "box"]
+    placement: ["dispersed", "contiguous"]
+    per_image_variants: 2   # 每張圖線上隨機生成的PKB視圖數
+  controls:
+    null1_full_blur_match_energy: true
+    null2_cutout_match_patches: true
+    null3_contiguous_block: true
+training:
+  epochs: 160
+  optimizer:
+    resnet50:
+      name: sgd
+      lr: 0.001
+      step_decay: [60, 120]
+      momentum: 0.9
+      weight_decay: 1e-4
+    deit:
+      name: adamw
+      lr: 1e-3
+  batch_size: 16
+  seeds: [0, 1, 2, 3, 4]
+eval:
+  frequency: "every 1 epoch"
+  save_best_on: "top1"
+  report:
+    tables: ["main_results", "ablation_n_a_sigma", "controls_vs_pkb", "sota_compare"]
+    plots: ["acc_curves", "f1_bars", "cam_diversity"]
+  cam_analysis:
+    method: "Grad-CAM or Rollout"
+    dispersion_index: "平均每圖熱區連通塊數與覆蓋比例"
+stopping_rules:
+  early_kill:
+    condition: "前30%訓練步數內，PKB 與 Null2 差距 < 0.5 個標準差且趨勢不改善"
+    pivot: ["提高sigma", "改用dispersed", "減少a_fraction"]
+success_criteria:
+  - "相對最佳強基線之 Acc@1 或 Macro-F1：95% CI 下限 > 0"
+  - "於等訓練預算下達成顯著改善或顯著更穩定（較小方差）"
+reproducibility:
+  log: ["git_commit", "env_hash", "dataset_checksum", "exact_splits"]
+  determinism: true
+```
+
+---
+
+# Code Plan 清單
+
+1. **資料與分割**
+
+* 下載/整理 UFG 資料；載入 **Cotton80、SoyLocal**，對齊官方統計與分割（Cotton80 為 240/240）。
+* 撰寫 `UFGDataset`：提供類別權重、類別名稱、固定 train/test 切分。
+* 單元測試：隨機抽樣各類樣本數是否為 3/3（Cotton80）。
+
+2. **前處理與基線復現**
+
+* 依官方基線流程實作：pad→resize 440→train random crop 384 / test 384 resize；SGD/bs=16/160 epochs 步調衰減。
+* 先跑 **ResNet-50 + Standard Aug**，確認與官方量級相符（不比較絕對數值、僅 sanity）。
+
+3. **PKB 增強算子**
+
+* 建立 `PatchKeepBlur(n, a_fraction, sigma, kernel, placement, rng)`：
+
+  * 切塊；選 $a$ 個 index（placement=dispersed：最大化距離；contiguous：隨機連通塊生成）；
+  * 只對選中子塊做高斯模糊（支援向量化、避免重複 allocate）；
+  * 與標準增強以 `torchvision.transforms` Compose。
+* 提供「**能量匹配**」工具：以高通能量近似衡量並調整 full-blur $\sigma$ 以匹配 PKB 的高頻損失（供 Null-1）。
+
+4. **對照增強與上層方法整合**
+
+* Null-1：`FullImageBlur(match_energy=True)`
+* Null-2：`PatchCutout(n, a_fraction)`（同子塊定位）
+* Null-3：`PatchKeepBlur(..., placement="contiguous")`
+* 與 **DCL/MaskCOV**：維持其訓練頭與損失不變，資料路徑加入 PKB（或僅標準增強）以做公平對照。
+
+5. **訓練腳本與掃參**
+
+* Hydra/Argparse 配置表：資料集、模型、增強、超參、seed。
+* 網格：$n \in \{2,3,4,5\}$、$a/n^2 \in \{0.1,0.2,0.3\}$、$\sigma \in \{1,2,3,4\}$、placement∈{dispersed,contiguous}；限制每張**線上生成**最多 2 個 PKB 視圖避免 $\binom{n^2}{a}$ 組合爆炸。
+
+6. **評估與統計**
+
+* Top-1/5、Macro-F1；以 5 seeds 報告**平均±95% CI**（bootstrap 10k）；同時計算**收斂速率**與**方差**。
+* **等擾動對齊**：以「受擾像素比例」對齊 PKB vs Cutout/Null-1。
+* **CAM 與分散度指標**：自動抽 100 張測試圖，輸出 CAM 與遮罩疊圖，計算熱區連通塊數與覆蓋率。
+
+7. **可重現性與釋出**
+
+* 儲存：隨機種子、環境雜湊、資料校驗、exact splits；產生 `config.yaml` 與 `results.csv`。
+* 自動產生表 1（主結果）、表 2（消融）、表 3（對照）、附錄（失敗案例圖集）。
+
+---
+
+## 與現有基準的對齊聲明（避免虛構/過度承諾）
+
+* **資料與分割**：Cotton80 與 SoyLocal 統計與切分依據 **UFG 基準**（Cotton80：80 類、訓練 240／測試 240；SoyLocal：200 類、訓練 600／測試 600）。
+* **挑戰背景**：小樣本子集表現顯著落後，Cotton80 基線**低於 60%**、且增強/增加訓練樣本會提升表現——動機支撐增強設計。&#x20;
+* **比較對象**：含 **DCL、MaskCOV、Cutout**（UFG 官方基線之一群），可視資源加入 **CLE-ViT** 作更強對照。 &#x20;
+
+> **嚴格聲明**：本計畫**不聲稱已證明**或**必然有效**。所有結論均以**相對強基線**、**多種子**、**信賴區間**與**Null 對照**驗證；若出現負結果，將依「機制錯誤／資源不足／實作問題」判斷並給出**下一步 A/B 驗證或 Kill** 方案（見 YAML `stopping_rules`）。
+
+---
+
+*參考基準與背景資料取自 UFG 與 CLE-ViT 論文（數據/結構/挑戰說明）；未在此虛構指標與數值。*
+Cotton80/SoyLocal 統計、分割與小樣本挑戰：&#x20;
+官方基線方法清單與訓練/前處理常規：&#x20;
+小樣本子集表現與改進方向（增強/擴樣）：&#x20;
+CLE-ViT 之對比自監督與與遮罩打亂脈絡：&#x20;
+
+---
