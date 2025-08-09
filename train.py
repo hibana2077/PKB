@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 import timm
 from src.dataset.ufgvc import UFGVCDataset
-from src.augmentations.pkb import PatchKeepBlur, PatchCutout, FullImageBlur
+from src.augmentations.pkb import PatchKeepBlur, PatchCutout, FullImageBlur, MultiViewPatchKeepBlur
 from src.utils.metrics import topk_accuracy, macro_f1, AverageMeter
 
 def build_transforms(args):
@@ -26,12 +26,23 @@ def build_transforms(args):
         aug_list.append(transforms.RandomRotation(10))
     aug_list.append(transforms.RandomCrop(train_crop))
     if args.augmentation == 'pkb':
-        aug_list.append(PatchKeepBlur(n=args.pkb_n, a_fraction=args.pkb_a_frac, sigma=args.pkb_sigma, placement=args.pkb_placement, seed=args.seed))
+        if args.pkb_views > 1:
+            # Delay tensor conversion until inside MultiView so we can reuse tensor transform
+            to_tensor_norm = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485,0.456,0.406], std=[0.229,0.224,0.225])
+            ])
+            aug_list.append(MultiViewPatchKeepBlur(n=args.pkb_n, a_fraction=args.pkb_a_frac, sigma=args.pkb_sigma,
+                                                   placement=args.pkb_placement, views=args.pkb_views, seed=args.seed,
+                                                   post_transform=to_tensor_norm))
+        else:
+            aug_list.append(PatchKeepBlur(n=args.pkb_n, a_fraction=args.pkb_a_frac, sigma=args.pkb_sigma, placement=args.pkb_placement, seed=args.seed))
     elif args.augmentation == 'cutout':
         aug_list.append(PatchCutout(n=args.pkb_n, a_fraction=args.pkb_a_frac, placement=args.pkb_placement, seed=args.seed))
     elif args.augmentation == 'fullblur':
         aug_list.append(FullImageBlur(sigma=args.pkb_sigma))
-    aug_list += [transforms.ToTensor(), transforms.Normalize(mean=[0.485,0.456,0.406], std=[0.229,0.224,0.225])]
+    if not (args.augmentation == 'pkb' and args.pkb_views > 1):
+        aug_list += [transforms.ToTensor(), transforms.Normalize(mean=[0.485,0.456,0.406], std=[0.229,0.224,0.225])]
     train_transform = transforms.Compose(aug_list)
     val_transform = transforms.Compose([
         pad_resize,
@@ -61,19 +72,36 @@ def adjust_lr(optimizer, epoch, args):
         for g in optimizer.param_groups:
             g['lr'] *= args.lr_decay_gamma
 
-def train_one_epoch(model, loader, criterion, optimizer, device):
+def train_one_epoch(model, loader, criterion, optimizer, device, multiview: bool=False):
     model.train()
     loss_meter, top1_meter, top5_meter = AverageMeter(), AverageMeter(), AverageMeter()
     for images, targets in loader:
-        images, targets = images.to(device), targets.to(device)
-        optimizer.zero_grad()
-        outputs = model(images)
-        loss = criterion(outputs, targets)
-        loss.backward(); optimizer.step()
-        acc1, acc5 = topk_accuracy(outputs, targets, topk=(1,5))
-        loss_meter.update(loss.item(), images.size(0))
-        top1_meter.update(acc1, images.size(0))
-        top5_meter.update(acc5, images.size(0))
+        targets = targets.to(device)
+        if multiview:
+            # images shape (B, V, C, H, W)
+            b, v, c, h, w = images.shape
+            images = images.view(b * v, c, h, w).to(device)
+            targets_exp = targets.unsqueeze(1).repeat(1, v).view(-1)
+            optimizer.zero_grad()
+            outputs = model(images)
+            loss = criterion(outputs, targets_exp)
+            loss.backward(); optimizer.step()
+            # Aggregate by averaging logits per sample before accuracy
+            outputs = outputs.view(b, v, -1).mean(dim=1)
+            acc1, acc5 = topk_accuracy(outputs, targets, topk=(1,5))
+            loss_meter.update(loss.item(), b)
+            top1_meter.update(acc1, b)
+            top5_meter.update(acc5, b)
+        else:
+            images, targets = images.to(device), targets
+            optimizer.zero_grad()
+            outputs = model(images)
+            loss = criterion(outputs, targets)
+            loss.backward(); optimizer.step()
+            acc1, acc5 = topk_accuracy(outputs, targets, topk=(1,5))
+            loss_meter.update(loss.item(), images.size(0))
+            top1_meter.update(acc1, images.size(0))
+            top5_meter.update(acc5, images.size(0))
     return loss_meter.avg, top1_meter.avg, top5_meter.avg
 
 def evaluate(model, loader, criterion, device):
@@ -117,6 +145,7 @@ def parse_args():
     p.add_argument('--pkb-a-frac', type=float, default=0.25)
     p.add_argument('--pkb-sigma', type=float, default=2.0)
     p.add_argument('--pkb-placement', choices=['random','dispersed','contiguous'], default='random')
+    p.add_argument('--pkb-views', type=int, default=1, help='Number of multi-view PKB variants per image (>=1)')
     p.add_argument('--seed', type=int, default=114514)
     p.add_argument('--num-workers', type=int, default=8)
     p.add_argument('--val-split', default='test')
@@ -145,13 +174,12 @@ def main():
     for epoch in range(1, args.epochs+1):
         adjust_lr(optimizer, epoch-1, args)
         start = time.time()
-        tr_loss, tr_top1, tr_top5 = train_one_epoch(model, loader_train, criterion, optimizer, device)
+        tr_loss, tr_top1, tr_top5 = train_one_epoch(model, loader_train, criterion, optimizer, device, multiview=(args.augmentation=='pkb' and args.pkb_views>1))
         val_loss, val_top1, val_top5, val_f1 = evaluate(model, loader_val, criterion, device)
         elapsed = time.time() - start
         current_lr = optimizer.param_groups[0]['lr']
         print(f'Epoch {epoch:03d}/{args.epochs} | LR {current_lr:.2e} | Train Loss {tr_loss:.3f} T1 {tr_top1:.3f} | Val Loss {val_loss:.3f} T1 {val_top1:.3f} T5 {val_top5:.3f} F1 {val_f1:.3f} | {elapsed:.1f}s')
         history.append({'epoch':epoch,'train_loss':tr_loss,'train_top1':tr_top1,'val_loss':val_loss,'val_top1':val_top1,'val_top5':val_top5,'val_f1':val_f1})
-        # save best checkpoint inside loop
         if args.save_best and val_top1 > best_top1:
             best_top1 = val_top1
             save_path = Path(args.output)/f'best_{args.model}_{args.dataset}.pth'
