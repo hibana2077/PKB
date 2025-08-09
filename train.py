@@ -146,14 +146,15 @@ def main():
         tr_loss, tr_top1, tr_top5 = train_one_epoch(model, loader_train, criterion, optimizer, device)
         val_loss, val_top1, val_top5, val_f1 = evaluate(model, loader_val, criterion, device)
         elapsed = time.time() - start
-        print(f'Epoch {epoch:03d}/{args.epochs} | Train Loss {tr_loss:.3f} T1 {tr_top1:.3f} | Val Loss {val_loss:.3f} T1 {val_top1:.3f} T5 {val_top5:.3f} F1 {val_f1:.3f} | {elapsed:.1f}s')
+        current_lr = optimizer.param_groups[0]['lr']
+        print(f'Epoch {epoch:03d}/{args.epochs} | LR {current_lr:.2e} | Train Loss {tr_loss:.3f} T1 {tr_top1:.3f} | Val Loss {val_loss:.3f} T1 {val_top1:.3f} T5 {val_top5:.3f} F1 {val_f1:.3f} | {elapsed:.1f}s')
         history.append({'epoch':epoch,'train_loss':tr_loss,'train_top1':tr_top1,'val_loss':val_loss,'val_top1':val_top1,'val_top5':val_top5,'val_f1':val_f1})
-    # save best checkpoint
-    if args.save_best and val_top1 > best_top1:
+        # save best checkpoint inside loop
+        if args.save_best and val_top1 > best_top1:
             best_top1 = val_top1
             save_path = Path(args.output)/f'best_{args.model}_{args.dataset}.pth'
-            torch.save({'model':model.state_dict(),'args':vars(args),'best_top1':best_top1}, save_path)
-            print(f'Saved best to {save_path} ({best_top1:.3f})')
+            torch.save({'model':model.state_dict(), 'args':vars(args), 'best_top1':best_top1, 'epoch':epoch}, save_path)
+            print(f'  New best top1 {best_top1:.3f} -> saved to {save_path}')
     history_path = Path(args.output)/f'history_{args.model}_{args.dataset}.json'
     with open(history_path,'w',encoding='utf-8') as f: json.dump(history,f,indent=2)
     print(f'History written to {history_path}')
