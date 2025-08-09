@@ -12,9 +12,9 @@ module load cuda/12.6.2
 # module load python3/3.10.4
 
 nvidia-smi >> gpu-info-v100.txt
-source /scratch/rp06/sl5952/WallyCL/.venv/bin/activate
+source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
-# Run training with WallyCL models
-python3 train.py --dataset cotton80 >> out_train_v100.txt
+# Run training with PKB models
+python3 train.py --dataset cotton80 --model resnet50 --color-jitter --hflip --rotate --save-best >> ct80_r50_baseaug.log
 
