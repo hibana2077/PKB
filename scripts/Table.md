@@ -23,7 +23,7 @@
 | Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
 |------|---------|-------|------------|--------|----------|-----------|-----------|
 |E000 | Cotton80 | efficientnet_b0.ra4_e3600_r224_in1k | Base | --color-jitter --hflip --rotate --train-crop 224 | None | 0.408 | 0.713 |
-|E001 | Cotton80 | efficientnet_b0.ra4_e3600_r224_in1k | PKB | --color-jitter --hflip --rotate --train-crop 224 | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random |  |  |
+|E001 | Cotton80 | efficientnet_b0.ra4_e3600_r224_in1k | PKB | --color-jitter --hflip --rotate --train-crop 224 | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.425 | 0.700 |
 
 ## F: EVA02
 
