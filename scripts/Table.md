@@ -28,4 +28,4 @@
 
 | Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
 |------|---------|-------|------------|--------|----------|-----------|-----------|
-|S000 | Cotton80 | swin_base_patch4_window12_384.ms_in22k_ft_in1k | Base | --color-jitter --hflip --rotate | None |  |  |
+|S000 | Cotton80 | swin_base_patch4_window12_384.ms_in22k_ft_in1k | Base | --color-jitter --hflip --rotate | None | 0.438 | 0.704 |
