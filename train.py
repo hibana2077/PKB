@@ -58,7 +58,7 @@ def build_model(args, num_classes:int):
     elif args.model == 'vit':
         return timm.create_model('vit_small_patch16_384', pretrained=args.pretrained, img_size=args.train_crop, num_classes=num_classes)
     else:
-        raise ValueError('Unsupported model')
+        return timm.create_model(args.model, pretrained=args.pretrained, num_classes=num_classes)
 
 def build_optimizer(args, model):
     if args.opt == 'sgd':
@@ -126,7 +126,7 @@ def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument('--dataset', default='cotton80')
     p.add_argument('--data-root', default='./data')
-    p.add_argument('--model', choices=['resnet50','vit'], default='resnet50')
+    p.add_argument('--model', type=str, default='resnet50')
     p.add_argument('--pretrained', action='store_true')
     p.add_argument('--epochs', type=int, default=160)
     p.add_argument('--batch-size', type=int, default=16)
