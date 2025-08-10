@@ -42,3 +42,4 @@
 | Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
 |------|---------|-------|------------|--------|----------|-----------|-----------|
 |C000 | Cotton80 | convnextv2_tiny.fcmae_ft_in22k_in1k_384 | Base | --color-jitter --hflip --rotate | None | 0.483 | 0.750 |
+|C001 | Cotton80 | convnextv2_tiny.fcmae_ft_in22k_in1k_384 | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random |  |  |
