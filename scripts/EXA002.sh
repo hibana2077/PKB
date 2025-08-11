@@ -1,8 +1,8 @@
 #!/bin/bash
 #PBS -P rp06
 #PBS -q gpuvolta
-#PBS -l ngpus=2           
-#PBS -l ncpus=24           
+#PBS -l ngpus=4           
+#PBS -l ncpus=48           
 #PBS -l mem=40GB           
 #PBS -l walltime=01:05:00  
 #PBS -l wd                  
