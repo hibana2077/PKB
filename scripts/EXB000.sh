@@ -13,4 +13,4 @@ module load cuda/12.6.2
 source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
-python3 train.py --dataset cotton80 --model efficientnet_b0.ra4_e3600_r224_in1k --color-jitter --hflip --rotate --train-crop 224 --save-best >> EXB000.log
+python3 train.py --dataset cotton80 --model efficientnet_b0.ra4_e3600_r224_in1k --pretrained --color-jitter --hflip --rotate --train-crop 224 --save-best >> EXB000.log
