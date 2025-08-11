@@ -12,6 +12,7 @@ import timm
 from src.dataset.ufgvc import UFGVCDataset
 from src.augmentations.pkb import PatchKeepBlur, PatchCutout, FullImageBlur, MultiViewPatchKeepBlur
 from src.utils.metrics import topk_accuracy, macro_f1, AverageMeter
+from contextlib import nullcontext
 
 def build_transforms(args):
     resize_side = args.resize_side
@@ -72,52 +73,78 @@ def adjust_lr(optimizer, epoch, args):
         for g in optimizer.param_groups:
             g['lr'] *= args.lr_decay_gamma
 
-def train_one_epoch(model, loader, criterion, optimizer, device, multiview: bool=False):
+def train_one_epoch(model, loader, criterion, optimizer, device, multiview: bool=False,
+                    scaler=None, amp: bool=False, autocast_dtype=torch.float16, channels_last: bool=False):
     model.train()
     loss_meter, top1_meter, top5_meter = AverageMeter(), AverageMeter(), AverageMeter()
+    autocast_ctx = torch.cuda.amp.autocast if (amp and device.type == 'cuda') else nullcontext
     for images, targets in loader:
-        targets = targets.to(device)
+        targets = targets.to(device, non_blocking=True)
         if multiview:
             # images shape (B, V, C, H, W)
             b, v, c, h, w = images.shape
-            images = images.view(b * v, c, h, w).to(device)
+            images = images.view(b * v, c, h, w)
+            images = images.to(device, non_blocking=True)
+            if channels_last:
+                images = images.to(memory_format=torch.channels_last)
             targets_exp = targets.unsqueeze(1).repeat(1, v).view(-1)
-            optimizer.zero_grad()
-            outputs = model(images)
-            loss = criterion(outputs, targets_exp)
-            loss.backward(); optimizer.step()
-            # Aggregate by averaging logits per sample before accuracy
+            optimizer.zero_grad(set_to_none=True)
+            with autocast_ctx(dtype=autocast_dtype):
+                outputs = model(images)
+                loss = criterion(outputs, targets_exp)
+            if scaler is not None:
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
+            else:
+                loss.backward(); optimizer.step()
+            # Aggregate logits per base sample
             outputs = outputs.view(b, v, -1).mean(dim=1)
             acc1, acc5 = topk_accuracy(outputs, targets, topk=(1,5))
             loss_meter.update(loss.item(), b)
             top1_meter.update(acc1, b)
             top5_meter.update(acc5, b)
         else:
-            images, targets = images.to(device), targets
-            optimizer.zero_grad()
-            outputs = model(images)
-            loss = criterion(outputs, targets)
-            loss.backward(); optimizer.step()
+            images = images.to(device, non_blocking=True)
+            if channels_last:
+                images = images.to(memory_format=torch.channels_last)
+            optimizer.zero_grad(set_to_none=True)
+            with autocast_ctx(dtype=autocast_dtype):
+                outputs = model(images)
+                loss = criterion(outputs, targets)
+            if scaler is not None:
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
+            else:
+                loss.backward(); optimizer.step()
             acc1, acc5 = topk_accuracy(outputs, targets, topk=(1,5))
             loss_meter.update(loss.item(), images.size(0))
             top1_meter.update(acc1, images.size(0))
             top5_meter.update(acc5, images.size(0))
     return loss_meter.avg, top1_meter.avg, top5_meter.avg
 
-def evaluate(model, loader, criterion, device):
+def evaluate(model, loader, criterion, device, amp: bool=False, autocast_dtype=torch.float16, channels_last: bool=False):
     model.eval()
     loss_meter, top1_meter, top5_meter = AverageMeter(), AverageMeter(), AverageMeter()
     all_outputs, all_targets = [], []
+    autocast_ctx = torch.cuda.amp.autocast if (amp and device.type == 'cuda') else nullcontext
     with torch.no_grad():
         for images, targets in loader:
-            images, targets = images.to(device), targets.to(device)
-            outputs = model(images)
-            loss = criterion(outputs, targets)
+            images = images.to(device, non_blocking=True)
+            if channels_last:
+                images = images.to(memory_format=torch.channels_last)
+            targets = targets.to(device, non_blocking=True)
+            with autocast_ctx(dtype=autocast_dtype):
+                outputs = model(images)
+                loss = criterion(outputs, targets)
             acc1, acc5 = topk_accuracy(outputs, targets, topk=(1,5))
             loss_meter.update(loss.item(), images.size(0))
             top1_meter.update(acc1, images.size(0))
             top5_meter.update(acc5, images.size(0))
-            all_outputs.append(outputs.cpu()); all_targets.append(targets.cpu())
+            # Move to CPU to free GPU memory sooner
+            all_outputs.append(outputs.float().cpu())
+            all_targets.append(targets.cpu())
     all_outputs = torch.cat(all_outputs); all_targets = torch.cat(all_targets)
     f1 = macro_f1(all_outputs, all_targets)
     return loss_meter.avg, top1_meter.avg, top5_meter.avg, f1
@@ -152,6 +179,11 @@ def parse_args():
     p.add_argument('--output', default='./outputs')
     p.add_argument('--save-best', action='store_true')
     p.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')
+    # Memory / performance optimization flags
+    p.add_argument('--amp', action='store_true', help='Enable mixed precision (fp16/bf16)')
+    p.add_argument('--amp-dtype', choices=['fp16','bf16'], default='fp16', help='AMP compute dtype')
+    p.add_argument('--grad-checkpoint', action='store_true', help='Enable model gradient checkpointing (if supported by model)')
+    p.add_argument('--channels-last', action='store_true', help='Use channels_last memory format for better memory throughput')
     return p.parse_args()
 
 def main():
@@ -164,10 +196,18 @@ def main():
     val_set = UFGVCDataset(dataset_name=args.dataset, root=args.data_root, split=args.val_split, transform=val_tf)
     num_classes = len(train_set.classes)
     model = build_model(args, num_classes).to(device)
+    if args.grad_checkpoint and hasattr(model, 'set_grad_checkpointing'):
+        model.set_grad_checkpointing(True)
+        print('Gradient checkpointing enabled')
+    if args.channels_last and device.type == 'cuda':
+        model = model.to(memory_format=torch.channels_last)
+        print('Model converted to channels_last')
     criterion = nn.CrossEntropyLoss()
     optimizer = build_optimizer(args, model)
-    loader_train = DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, pin_memory=True)
-    loader_val = DataLoader(val_set, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, pin_memory=True)
+    loader_train = DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers,
+                              pin_memory=True, persistent_workers=args.num_workers>0)
+    loader_val = DataLoader(val_set, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers,
+                            pin_memory=True, persistent_workers=args.num_workers>0)
     base_train = len(loader_train.dataset)
     base_val = len(loader_val.dataset)
     if args.augmentation == 'pkb' and args.pkb_views > 1:
@@ -176,12 +216,27 @@ def main():
     else:
         print(f"Training Data count: {base_train}")
     print(f"Validation Data count: {base_val}")
+    # AMP setup
+    amp_enabled = args.amp and device.type == 'cuda'
+    if amp_enabled:
+        autocast_dtype = torch.bfloat16 if args.amp_dtype=='bf16' else torch.float16
+        print(f'Mixed precision enabled ({args.amp_dtype})')
+    else:
+        autocast_dtype = torch.float32
+    scaler = torch.cuda.amp.GradScaler(enabled=amp_enabled and args.amp_dtype=='fp16')
     best_top1 = 0.0; history = []
     for epoch in range(1, args.epochs+1):
         adjust_lr(optimizer, epoch-1, args)
         start = time.time()
-        tr_loss, tr_top1, tr_top5 = train_one_epoch(model, loader_train, criterion, optimizer, device, multiview=(args.augmentation=='pkb' and args.pkb_views>1))
-        val_loss, val_top1, val_top5, val_f1 = evaluate(model, loader_val, criterion, device)
+        tr_loss, tr_top1, tr_top5 = train_one_epoch(
+            model, loader_train, criterion, optimizer, device,
+            multiview=(args.augmentation=='pkb' and args.pkb_views>1),
+            scaler=scaler, amp=amp_enabled, autocast_dtype=autocast_dtype,
+            channels_last=args.channels_last)
+        val_loss, val_top1, val_top5, val_f1 = evaluate(
+            model, loader_val, criterion, device,
+            amp=amp_enabled, autocast_dtype=autocast_dtype,
+            channels_last=args.channels_last)
         elapsed = time.time() - start
         current_lr = optimizer.param_groups[0]['lr']
         print(f'Epoch {epoch:03d}/{args.epochs} | LR {current_lr:.2e} | Train Loss {tr_loss:.3f} T1 {tr_top1:.3f} | Val Loss {val_loss:.3f} T1 {val_top1:.3f} T5 {val_top5:.3f} F1 {val_f1:.3f} | {elapsed:.1f}s')
