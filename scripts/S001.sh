@@ -15,4 +15,4 @@ source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
 # Run training with PKB models
-python3 train.py --dataset cotton80 --model swin_base_patch4_window12_384.ms_in22k_ft_in1k --pretrained --augmentation pkb --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random --color-jitter --hflip --rotate --save-best >> S001.log
+python3 train.py --dataset cotton80 --model swin_base_patch4_window12_384.ms_in22k_ft_in1k --pretrained --augmentation pkb --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random --color-jitter --hflip --rotate --batch-size 8 --save-best >> S001.log
