@@ -9,6 +9,7 @@
 |J002 | Cotton80 | Resnet50 | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 4.0 --pkb-views 20 --pkb-placement random | 0.438 | 0.704 |
 |J003 | Cotton80 | Resnet50 | cutout | --color-jitter --hflip --rotate | None | 0.367 | 0.667 |
 |J004 | Cotton80 | Resnet50 | fullblur | --color-jitter --hflip --rotate | None | 0.100 | 0.217 |
+|J005 | SoyAgeing-R1 | Resnet50 | Base | --color-jitter --hflip --rotate | None | Run yet | Run yet |
 
 ## A: Tiny ViT
 
