@@ -4,7 +4,7 @@
 #PBS -l ngpus=1            
 #PBS -l ncpus=12            
 #PBS -l mem=20GB           
-#PBS -l walltime=00:59:14  
+#PBS -l walltime=01:05:00
 #PBS -l wd                  
 #PBS -l storage=scratch/rp06
 
