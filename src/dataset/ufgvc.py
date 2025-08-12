@@ -60,6 +60,11 @@ class UFGVCDataset(Dataset):
             'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/ufgvc/soy_ageing_R6_dataset.parquet?download=true',
             'filename': 'soy_ageing_R6_dataset.parquet',
             'description': 'Soybean ageing dataset - Round 6'
+        },
+        'cub_200_2011': {
+            'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/cub_dataset.parquet?download=true',
+            'filename': 'cub_dataset.parquet',
+            'description': 'CUB-200-2011 dataset for fine-grained bird classification'
         }
     }
     
