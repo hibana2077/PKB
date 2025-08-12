@@ -10,6 +10,10 @@
 |J003 | Cotton80 | Resnet50 | cutout | --color-jitter --hflip --rotate | None | 0.367 | 0.667 |
 |J004 | Cotton80 | Resnet50 | fullblur | --color-jitter --hflip --rotate | None | 0.100 | 0.217 |
 |J005 | SoyAgeing-R1 | Resnet50 | Base | --color-jitter --hflip --rotate | None | 0.731 | 0.904 |
+|J006 | Cotton80 | Resnet50 | PKB | --color-jitter --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.25 --pkb-sigma 4.0 --pkb-views 4 --pkb-placement random |  |  |
+|J007 | Cotton80 | Resnet50 | PKB | --color-jitter --hflip --rotate | --pkb-n 12 --pkb-a-frac 0.25 --pkb-sigma 4.0 --pkb-views 4 --pkb-placement random |  |  |
+|J008 | Cotton80 | Resnet50 | PKB | --color-jitter --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.25 --pkb-sigma 4.0 --pkb-views 4 --pkb-placement random |  |  |
+|J009 | Cotton80 | Resnet50 | PKB | --color-jitter --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.25 --pkb-sigma 4.0 --pkb-views 4 --pkb-placement random |  |  |
 
 ## A: Tiny ViT
 
