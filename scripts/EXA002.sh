@@ -1,11 +1,11 @@
 #!/bin/bash
 #PBS -P rp06
-#PBS -q gpuvolta
-#PBS -l ngpus=1           
-#PBS -l ncpus=12           
-#PBS -l mem=40GB           
-#PBS -l walltime=01:05:00  
-#PBS -l wd                  
+#PBS -q dgxa100
+#PBS -l ngpus=1
+#PBS -l ncpus=16
+#PBS -l mem=32GB
+#PBS -l walltime=02:30:00
+#PBS -l wd
 #PBS -l storage=scratch/rp06
 
 module load cuda/12.6.2
