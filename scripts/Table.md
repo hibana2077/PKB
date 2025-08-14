@@ -85,3 +85,18 @@
 |EXB021 | Soybean | densenet161.tv_in1k | Base | --color-jitter --hflip --rotate --train-crop 224 | None | 0.503 | 0.760 |
 |EXB022 | SoyAgeing-R1 | densenet161.tv_in1k | Base | --color-jitter --hflip --rotate --train-crop 224 | None | 0.809 | 0.945 |
 |EXB023 | CUB-200 | densenet161.tv_in1k | Base | --color-jitter --hflip --rotate --train-crop 224 | None | 0.790 | 0.940 |
+
+| Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
+|------|---------|-------|------------|--------|----------|-----------|-----------|
+| M000 | Cotton80 | mobilenetv4_hybrid_medium.ix_e550_r384_in1k | Base| --color-jitter --hflip --rotate --train-crop 384 | None| Run yet| Run yet|
+| M001 | Cotton80 | mobilenetv4_hybrid_medium.ix_e550_r384_in1k | PKB| --color-jitter --hflip --rotate --train-crop 384 | --pkb-n 6  --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 4  --pkb-placement random| Run yet| Run yet|
+| M002 | Cotton80 | mobilenetv4_hybrid_medium.ix_e550_r384_in1k | PKB| --color-jitter --hflip --rotate --train-crop 384 | --pkb-n 6  --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8  --pkb-placement random| Run yet| Run yet|
+| M003 | Cotton80 | mobilenetv4_hybrid_medium.ix_e550_r384_in1k | PKB| --color-jitter --hflip --rotate --train-crop 384 | --pkb-n 8  --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8  --pkb-placement random| Run yet| Run yet|
+| M004 | Cotton80 | mobilenetv4_hybrid_medium.ix_e550_r384_in1k | PKB| --color-jitter --hflip --rotate --train-crop 384 | --pkb-n 8  --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 8  --pkb-placement random| Run yet| Run yet|
+| M005 | Cotton80 | mobilenetv4_hybrid_medium.ix_e550_r384_in1k | PKB| --color-jitter --hflip --rotate --train-crop 384 | --pkb-n 8  --pkb-a-frac 0.30 --pkb-sigma 2.0 --pkb-views 8  --pkb-placement random| Run yet| Run yet|
+| M006 | Cotton80 | mobilenetv4_hybrid_medium.ix_e550_r384_in1k | PKB| --color-jitter --hflip --rotate --train-crop 384 | --pkb-n 8  --pkb-a-frac 0.25 --pkb-sigma 3.0 --pkb-views 8  --pkb-placement random| Run yet| Run yet|
+| M007 | Cotton80 | mobilenetv4_hybrid_medium.ix_e550_r384_in1k | PKB| --color-jitter --hflip --rotate --train-crop 384 | --pkb-n 8  --pkb-a-frac 0.25 --pkb-sigma 4.0 --pkb-views 8  --pkb-placement random| Run yet| Run yet|
+| M008 | Cotton80 | mobilenetv4_hybrid_medium.ix_e550_r384_in1k | PKB| --color-jitter --hflip --rotate --train-crop 384 | --pkb-n 6  --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 4  --pkb-placement dispersed | Run yet| Run yet|
+| M009 | Cotton80 | mobilenetv4_hybrid_medium.ix_e550_r384_in1k | PKB| --color-jitter --hflip --rotate --train-crop 384 | --pkb-n 8  --pkb-a-frac 0.25 --pkb-sigma 3.0 --pkb-views 4  --pkb-placement dispersed | Run yet| Run yet|
+| M010 | Cotton80 | mobilenetv4_hybrid_medium.ix_e550_r384_in1k | PKB| --color-jitter --hflip --rotate --train-crop 384 | --pkb-n 10 --pkb-a-frac 0.25 --pkb-sigma 3.0 --pkb-views 8  --pkb-placement dispersed | Run yet| Run yet|
+| M011 | Cotton80 | mobilenetv4_hybrid_medium.ix_e550_r384_in1k | PKB| --color-jitter --hflip --rotate --train-crop 384 | --pkb-n 12 --pkb-a-frac 0.25 --pkb-sigma 4.0 --pkb-views 4  --pkb-placement random| Run yet| Run yet|
