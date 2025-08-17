@@ -65,6 +65,11 @@ class UFGVCDataset(Dataset):
             'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/cub_dataset.parquet?download=true',
             'filename': 'cub_dataset.parquet',
             'description': 'CUB-200-2011 dataset for fine-grained bird classification'
+        },
+        'soygene': {
+            'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/ufgvc/soygene_dataset.parquet?download=true',
+            'filename': 'soygene_dataset.parquet',
+            'description': 'Soygene dataset for soybean classification'
         }
     }
     
