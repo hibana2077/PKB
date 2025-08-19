@@ -36,6 +36,7 @@
 |------|---------|-------|------------|--------|----------|-----------|-----------|
 |E000 | Cotton80 | efficientnet_b0.ra4_e3600_r224_in1k | Base | --color-jitter --hflip --rotate --train-crop 224 | None | 0.408 | 0.713 |
 |E001 | Cotton80 | efficientnet_b0.ra4_e3600_r224_in1k | PKB | --color-jitter --hflip --rotate --train-crop 224 | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.425 | 0.700 |
+|E002 | SoyGene | efficientnet_b0.ra4_e3600_r224_in1k | PKB | --color-jitter --hflip --rotate --train-crop 224 | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.425 | 0.700 |
 
 ## F: EVA02
 
@@ -153,7 +154,7 @@
 | TVC004 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.30 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.816 | 0.948 |
 | TVC005 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 3.0 --pkb-views 8 --pkb-placement random | 0.821 | 0.946 |
 | TVC006 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | 0.818 | 0.949 |
-| TVC007 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.24 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+| TVC007 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.24 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.825 | 0.948 |
 | TVC008 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.26 --pkb-sigma 1.8 --pkb-views 8 --pkb-placement random | ? | ? |
 | TVC009 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.22 --pkb-sigma 2.2 --pkb-views 8 --pkb-placement random | ? | ? |
-| TVC010 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.24 --pkb-sigma 1.9 --pkb-views 8 --pkb-placement random | ? | ? |
+| TVC010 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.24 --pkb-sigma 1.9 --pkb-views 8 --pkb-placement random | 0.823 | 0.949 |
