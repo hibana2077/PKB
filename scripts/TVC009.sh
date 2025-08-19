@@ -14,4 +14,4 @@ source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
 # Run training for TVC009 (SoyAgeing-R3) - PKB params from Table.md
-python3 train.py --dataset soy_ageing_r3 --model tiny_vit_21m_384.dist_in22k_ft_in1k --pretrained --augmentation pkb --pkb-n 6 --pkb-a-frac 0.22 --pkb-sigma 2.2 --pkb-views 12 --pkb-placement random --color-jitter --hflip --rotate --save-best >> TVC009.log
+python3 train.py --dataset soy_ageing_r3 --model tiny_vit_21m_384.dist_in22k_ft_in1k --pretrained --augmentation pkb --pkb-n 6 --pkb-a-frac 0.22 --pkb-sigma 2.2 --pkb-views 8 --pkb-placement random --color-jitter --hflip --rotate --save-best >> TVC009.log
