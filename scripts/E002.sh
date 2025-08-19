@@ -4,14 +4,11 @@
 #PBS -l ngpus=1            
 #PBS -l ncpus=12            
 #PBS -l mem=64GB           
-#PBS -l walltime=03:00:00  
+#PBS -l walltime=09:00:00  
 #PBS -l wd                  
 #PBS -l storage=scratch/rp06
 
 module load cuda/12.6.2
-# module load python3/3.10.4
-
-nvidia-smi >> gpu-info-v100.txt
 source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
