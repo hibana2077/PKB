@@ -14,4 +14,4 @@ source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
 # Run training with PKB models
-python3 train.py --dataset soygene --model tiny_vit_21m_384.dist_in22k_ft_in1k --pretrained --color-jitter --hflip --rotate --save-best >> EXA010.log
+python3 train.py --dataset soygene --model tiny_vit_21m_384.dist_in22k_ft_in1k --pretrained --pkb-n 6 --pkb-a-frac 0.30 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random --color-jitter --hflip --rotate --save-best >> EXA011.log
