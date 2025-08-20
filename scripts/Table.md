@@ -82,7 +82,7 @@
 |EXB000 | Cotton80 | efficientnet_b0.ra4_e3600_r224_in1k | Base | --color-jitter --hflip --rotate --train-crop 224 | None | 0.433 | 0.729 |
 |EXB001 | Soybean | efficientnet_b0.ra4_e3600_r224_in1k | Base | --color-jitter --hflip --rotate --train-crop 224 | None | 0.440 | 0.708 |
 |EXB002 | SoyAgeing-R1 | efficientnet_b0.ra4_e3600_r224_in1k | Base | --color-jitter --hflip --rotate --train-crop 224 | None | 0.753 | 0.921 |
-|EXB003 | CUB-200 | efficientnet_b0.ra4_e3600_r224_in1k | Base | --color-jitter --hflip --rotate --train-crop 224 | None | ? | ? |
+|EXB003 | CUB-200 | efficientnet_b0.ra4_e3600_r224_in1k | Base | --color-jitter --hflip --rotate --train-crop 224 | None | 0.761 | 0.922 |
 |EXB010 | Cotton80 | inception_v3.tf_adv_in1k | Base | --color-jitter --hflip --rotate --train-crop 299 | None | 0.358 | 0.633 |
 |EXB011 | Soybean | inception_v3.tf_adv_in1k | Base | --color-jitter --hflip --rotate --train-crop 299 | None | 0.358 | 0.607 |
 |EXB012 | SoyAgeing-R1 | inception_v3.tf_adv_in1k | Base | --color-jitter --hflip --rotate --train-crop 299 | None | 0.639 | 0.858 |
@@ -163,4 +163,4 @@
 | TVC009 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.22 --pkb-sigma 2.2 --pkb-views 8 --pkb-placement random | 0.823 | 0.949 |
 | TVC010 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.24 --pkb-sigma 1.9 --pkb-views 8 --pkb-placement random | 0.823 | 0.949 |
 | TVC011 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | 0.828 | 0.956 |
-| TVC012 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.15 --pkb-sigma 2.1 --pkb-views 10 --pkb-placement random | ? | ? |
+| TVC012 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.15 --pkb-sigma 2.1 --pkb-views 10 --pkb-placement random | 0.824 | 0.952 |
