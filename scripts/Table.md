@@ -137,7 +137,7 @@
 | TVA004 | Cotton80 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.30 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.700 | 0.883 |
 | TVA005 | Cotton80 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 3.0 --pkb-views 8 --pkb-placement random | 0.675 | 0.883 |
 | TVA006 | Cotton80 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | 0.683 | 0.879 |
-| TVA007 | Cotton80 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | None | --pkb-n 6 --pkb-a-frac 0.30 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+| TVA007 | Cotton80 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | None | --pkb-n 6 --pkb-a-frac 0.30 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.700 | 0.875 |
 
 ## TVB: Tiny ViT Parameter Experiments B - Soybean
 
@@ -149,8 +149,8 @@
 | TVB004 | Soybean | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.30 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.540 | 0.790 |
 | TVB005 | Soybean | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 3.0 --pkb-views 8 --pkb-placement random | 0.568 | 0.817 |
 | TVB006 | Soybean | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | 0.543 | 0.800 |
-| TVB007 | Soybean | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 3.0 --pkb-views 8 --pkb-placement random | ? | ? |
-| TVB008 | Soybean | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | None | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+| TVB007 | Soybean | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 3.0 --pkb-views 8 --pkb-placement random | 0.657 | 0.890 |
+| TVB008 | Soybean | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | None | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.602 | 0.868 |
 
 ## TVC: Tiny ViT Parameter Experiments C - SoyAgeing-R3
 
@@ -178,3 +178,19 @@
 | TVD001 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | None | --pkb-n 4 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
 | TVD002 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | None | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
 | TVD003 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | None | --pkb-n 8 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+
+## TVE: Tiny ViT Parameter Experiments E - SoyGene
+
+| Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+|TVE001 | SoyGene | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | ? | ? |
+|TVE002 | SoyGene | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|TVE003 | SoyGene | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 4 --pkb-placement dispersed | ? | ? |
+
+## TVF: Tiny ViT Parameter Experiments F - SoyAgeing-R{4,5,6}
+
+| Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+|TVF001 | SoyAgeing-R4 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | ? | ? |
+|TVF002 | SoyAgeing-R5 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | ? | ? |
+|TVF003 | SoyAgeing-R6 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | ? | ? |
