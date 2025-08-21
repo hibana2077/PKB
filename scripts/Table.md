@@ -175,7 +175,7 @@
 
 | Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| TVD001 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | None | --pkb-n 4 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+| TVD001 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | None | --pkb-n 4 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.901 | 0.981 |
 | TVD002 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | None | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
 | TVD003 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | None | --pkb-n 8 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
 
