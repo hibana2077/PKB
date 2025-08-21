@@ -165,8 +165,8 @@
 | TVC010 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.24 --pkb-sigma 1.9 --pkb-views 8 --pkb-placement random | 0.823 | 0.949 |
 | TVC011 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | 0.828 | 0.956 |
 | TVC012 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.15 --pkb-sigma 2.1 --pkb-views 10 --pkb-placement random | 0.824 | 0.952 |
-| TVC013 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | ? | ? |
-| TVC014 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | None | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | ? | ? |
+| TVC013 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | 0.809 | 0.947 |
+| TVC014 | SoyAgeing-R3 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | None | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | 0.860 | 0.957 |
 
 ## TVD: Tiny ViT Parameter Experiments D - CUB-200
 
