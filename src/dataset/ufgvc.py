@@ -70,6 +70,11 @@ class UFGVCDataset(Dataset):
             'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/ufgvc/soygene_dataset.parquet?download=true',
             'filename': 'soygene_dataset.parquet',
             'description': 'Soygene dataset for soybean classification'
+        },
+        'soyglobal': {
+            'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/ufgvc/soyglobal_dataset.parquet?download=true',
+            'filename': 'soyglobal_dataset.parquet',
+            'description': 'Soyglobal dataset for global soybean classification'
         }
     }
     
