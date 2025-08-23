@@ -185,7 +185,7 @@
 | Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 |TVE001 | SoyGene | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | 0.813 | 0.957 |
-|TVE002 | SoyGene | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|TVE002 | SoyGene | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.801 | 0.956 |
 |TVE003 | SoyGene | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 4 --pkb-placement dispersed | ? | ? |
 
 ## TVF: Tiny ViT Parameter Experiments F - SoyAgeing-R{4,5,6}
@@ -201,5 +201,6 @@
 | Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 |TVG001 | SoyGlobal | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | ? | ? |
+|TVG001V | SoyGlobal | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate --batch-size 7 | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | ? | ? |
 |TVG002 | SoyGlobal | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
 |TVG003 | SoyGlobal | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 4 --pkb-placement dispersed | ? | ? |
