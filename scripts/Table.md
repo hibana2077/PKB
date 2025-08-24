@@ -75,7 +75,7 @@
 |EXA009 | Cotton80 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.25 --pkb-sigma 4.0 --pkb-views 8 --pkb-placement random | 0.679 | 0.883 |
 |EXA010 | SoyGene | tiny_vit_21m_384.dist_in22k_ft_in1k | Base | --color-jitter --hflip --rotate | None | 0.773 | 0.931 |
 |EXA011 | SoyGene | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --color-jitter --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.30 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.778 | 0.932 |
-|EXA012 | SoyGlobal | tiny_vit_21m_384.dist_in22k_ft_in1k | Base | --color-jitter --hflip --rotate | None | ? | ? |
+|EXA012 | SoyGlobal | tiny_vit_21m_384.dist_in22k_ft_in1k | Base | --color-jitter --hflip --rotate | None | 0.478 | 0.716 |
 
 ## EXB: Experiment B - Classic CNN models on each UFG dataset
 
@@ -186,7 +186,7 @@
 | --- | --- | --- | --- | --- | --- | --- | --- |
 |TVE001 | SoyGene | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | 0.813 | 0.957 |
 |TVE002 | SoyGene | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.801 | 0.956 |
-|TVE003 | SoyGene | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 4 --pkb-placement dispersed | ? | ? |
+|TVE003 | SoyGene | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 4 --pkb-placement dispersed | 0.838 | 0.961 |
 
 ## TVF: Tiny ViT Parameter Experiments F - SoyAgeing-R{4,5,6}
 
