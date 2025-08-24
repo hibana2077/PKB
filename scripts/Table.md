@@ -204,6 +204,3 @@
 | Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 |TVG001 | SoyGlobal | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | ? | ? |
-|TVG001V | SoyGlobal | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate --batch-size 7 | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | ? | ? |
-|TVG002 | SoyGlobal | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
-|TVG003 | SoyGlobal | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 4 --pkb-placement dispersed | ? | ? |
