@@ -14,8 +14,9 @@
 |J007 | Cotton80 | Resnet50 | PKB | --color-jitter --hflip --rotate | --pkb-n 12 --pkb-a-frac 0.25 --pkb-sigma 4.0 --pkb-views 4 --pkb-placement random | 0.429 | 0.667 |
 |J008 | Cotton80 | Resnet50 | PKB | --color-jitter --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.25 --pkb-sigma 4.0 --pkb-views 4 --pkb-placement random | 0.429 | 0.700 |
 |J009 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.446 | 0.671 |
-|J010 | CUB-200 | Resnet50 | Base | --hflip --rotate | None | ? | ? |
+|J010 | CUB-200 | Resnet50 | Base | --hflip --rotate | None | 0.849 | 0.962 |
 |J011 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|J012 | CUB-200 | Resnet34 | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random --train-crop 224| ? | ? |
 
 ## A: Tiny ViT
 
