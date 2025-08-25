@@ -110,6 +110,50 @@ class PatchKeepBlur:
             for i in remaining[:self.a - len(selected)]:
                 selected.add(i)
         return list(selected)
+
+
+class MultiViewPatchKeepBlur:
+    """Generate multiple distinct PKB views (unique patch index sets) and stack as tensor.
+
+    Returns torch.Tensor shape (V, C, H, W) after provided post_transform.
+    Assumes pre_transform produces a PIL.Image, post_transform converts to tensor & normalizes.
+    """
+    def __init__(self, n: int = 4, a: Optional[int] = None, a_fraction: Optional[float] = 0.25,
+                 sigma: float = 2.0, placement: str = 'random', views: int = 2,
+                 seed: Optional[int] = None, post_transform=None, max_resample_factor: int = 20,
+                 highlight: bool = False, highlight_color: str = 'E30918'):
+        assert views > 1, 'Use PatchKeepBlur for single view'
+        self.views = views
+        self.post_transform = post_transform
+        self.pkb = PatchKeepBlur(n=n, a=a, a_fraction=a_fraction, sigma=sigma, placement=placement, seed=seed,
+                                 highlight=highlight, highlight_color=highlight_color)
+        self.max_attempts = max_resample_factor * views
+
+    def __call__(self, img: Image.Image):
+        # img should already be augmented & cropped to final size before this call.
+        collected = []
+        used: Set[Tuple[int,...]] = set()
+        attempts = 0
+        while len(collected) < self.views and attempts < self.max_attempts:
+            indices = self.pkb._select_indices()
+            key = tuple(sorted(indices))
+            if key in used:
+                attempts += 1
+                continue
+            used.add(key)
+            view = self.pkb._apply_indices(img, indices)
+            if self.post_transform:
+                view = self.post_transform(view)
+            collected.append(view)
+        # If uniqueness space exhausted early, duplicate last to keep tensor size consistent.
+        if len(collected) == 0:
+            raise RuntimeError('MultiViewPatchKeepBlur produced 0 views')
+        while len(collected) < self.views:
+            collected.append(collected[-1])
+        # Stack if tensors, else return list
+        if isinstance(collected[0], torch.Tensor):
+            return torch.stack(collected, dim=0)
+        return collected
 ```
 
 ## Training Loop
