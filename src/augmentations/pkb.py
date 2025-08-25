@@ -1,6 +1,6 @@
 import random
 from typing import Optional, Tuple, List, Iterable, Set
-from PIL import Image, ImageFilter
+from PIL import Image, ImageFilter, ImageDraw
 import torch
 
 class PatchKeepBlur:
@@ -8,7 +8,8 @@ class PatchKeepBlur:
     Splits image into n x n patches, blurs a subset, keeps rest sharp.
     """
     def __init__(self, n: int = 4, a: Optional[int] = None, a_fraction: Optional[float] = 0.25,
-                 sigma: float = 2.0, placement: str = 'random', seed: Optional[int] = None):
+                 sigma: float = 2.0, placement: str = 'random', seed: Optional[int] = None,
+                 highlight: bool = False, highlight_color: str = 'E30918'):
         assert n > 1, 'n must be > 1'
         self.n = n
         total = n * n
@@ -22,6 +23,8 @@ class PatchKeepBlur:
         self.sigma = sigma
         self.placement = placement
         self.base_rng = random.Random(seed)
+        self.highlight = highlight
+        self.highlight_color = self._hex_to_rgb(highlight_color) if highlight else None
 
     def __call__(self, img: Image.Image) -> Image.Image:
         if self.a == 0:
@@ -41,6 +44,7 @@ class PatchKeepBlur:
         pw = w // self.n
         ph = h // self.n
         blur_filter = ImageFilter.GaussianBlur(self.sigma)
+        draw = ImageDraw.Draw(out) if self.highlight else None
         for idx in indices:
             r, c = divmod(idx, self.n)
             left = c * pw
@@ -50,7 +54,22 @@ class PatchKeepBlur:
             patch = out.crop((left, upper, right, lower))
             patch = patch.filter(blur_filter)
             out.paste(patch, (left, upper))
+            if draw is not None:
+                # draw rectangle inside image bounds
+                # use a modest border width
+                bw = max(1, int(min(pw, ph) * 0.04))
+                for i in range(bw):
+                    draw.rectangle([left + i, upper + i, right - 1 - i, lower - 1 - i], outline=self.highlight_color)
         return out
+
+    @staticmethod
+    def _hex_to_rgb(hex_str: str) -> Tuple[int,int,int]:
+        s = hex_str.strip().lstrip('#')
+        if len(s) == 3:
+            s = ''.join([ch*2 for ch in s])
+        if len(s) != 6:
+            raise ValueError(f'Invalid hex color: {hex_str}')
+        return tuple(int(s[i:i+2], 16) for i in (0,2,4))
 
     def _select_indices(self) -> List[int]:
         total = self.n * self.n
@@ -167,11 +186,13 @@ class MultiViewPatchKeepBlur:
     """
     def __init__(self, n: int = 4, a: Optional[int] = None, a_fraction: Optional[float] = 0.25,
                  sigma: float = 2.0, placement: str = 'random', views: int = 2,
-                 seed: Optional[int] = None, post_transform=None, max_resample_factor: int = 20):
+                 seed: Optional[int] = None, post_transform=None, max_resample_factor: int = 20,
+                 highlight: bool = False, highlight_color: str = 'E30918'):
         assert views > 1, 'Use PatchKeepBlur for single view'
         self.views = views
         self.post_transform = post_transform
-        self.pkb = PatchKeepBlur(n=n, a=a, a_fraction=a_fraction, sigma=sigma, placement=placement, seed=seed)
+        self.pkb = PatchKeepBlur(n=n, a=a, a_fraction=a_fraction, sigma=sigma, placement=placement, seed=seed,
+                                 highlight=highlight, highlight_color=highlight_color)
         self.max_attempts = max_resample_factor * views
 
     def __call__(self, img: Image.Image):
