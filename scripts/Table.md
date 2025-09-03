@@ -17,6 +17,8 @@
 |J010 | CUB-200 | Resnet50 | Base | --hflip --rotate | None | 0.849 | 0.962 |
 |J011 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.853 | 0.962 |
 |J012 | CUB-200 | Resnet34 | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random --train-crop 224| 0.787 | 0.947 |
+|J013 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 4 --pkb-placement random | ? | ? |
+|J014 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.30 --pkb-sigma 2.0 --pkb-views 4 --pkb-placement random | ? | ? |
 
 ## A: Tiny ViT
 
