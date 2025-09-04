@@ -17,8 +17,11 @@
 |J010 | CUB-200 | Resnet50 | Base | --hflip --rotate | None | 0.849 | 0.962 |
 |J011 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.853 | 0.962 |
 |J012 | CUB-200 | Resnet34 | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random --train-crop 224| 0.787 | 0.947 |
-|J013 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 4 --pkb-placement random | ? | ? |
-|J014 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.30 --pkb-sigma 2.0 --pkb-views 4 --pkb-placement random | ? | ? |
+|J013 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 4 --pkb-placement random | 0.856 | 0.961 |
+|J014 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.30 --pkb-sigma 2.0 --pkb-views 4 --pkb-placement random | 0.849 | 0.960 |
+|J015 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.15 --pkb-sigma 1.5 --pkb-views 4 --pkb-placement random | ? | ? |
+|J016 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.12 --pkb-sigma 1.5 --pkb-views 4 --pkb-placement random | ? | ? |
+|J017 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 12 --pkb-a-frac 0.18 --pkb-sigma 1.2 --pkb-views 6 --pkb-placement random | ? | ? |
 
 ## A: Tiny ViT
 
@@ -185,8 +188,8 @@
 | TVD002 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | None | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.900 | 0.978 |
 | TVD003 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | None | --pkb-n 8 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.899 | 0.982 |
 | TVD004 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | 0.904 | 0.978 |
-| TVD005 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 4 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
-| TVD006 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+| TVD005 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 4 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.907 | 0.980 |
+| TVD006 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.905 | 0.977 |
 
 ## TVE: Tiny ViT Parameter Experiments E - SoyGene
 

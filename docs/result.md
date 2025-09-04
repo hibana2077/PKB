@@ -12,8 +12,9 @@
 
 | Method | CUB_200 | Stanford_Cars | Standford_Dogs |
 |--------|---------|---------------|----------------|
-| PKB-ViT | 0.907   | ? | ? |
-| PKB-R50 | 0.853   | ? | ? |
-| PKB-R34 | 0.787   | ? | ? |
+| PKB-ViT | 0.907 | ? | ? |
+| PKB-R50 | 0.856 | ? | ? |
+| PKB-R34 | 0.787 | ? | ? |
 | Horospherical-Smart-R34-3d | 0.574 | ? | ? |
 | Horospherical-Smart-R34-50d | 0.592 | ? | ? |
+| LSDA-R50 | 0.867 | 0.943 | ? |
