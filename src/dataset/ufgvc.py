@@ -75,6 +75,11 @@ class UFGVCDataset(Dataset):
             'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/ufgvc/soyglobal_dataset.parquet?download=true',
             'filename': 'soyglobal_dataset.parquet',
             'description': 'Soyglobal dataset for global soybean classification'
+        },
+        'stanford_cars': {
+            'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/stanford_cars_dataset.parquet?download=true',
+            'filename': 'stanford_cars_dataset.parquet',
+            'description': 'Stanford Cars dataset for fine-grained car classification'
         }
     }
     
