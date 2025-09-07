@@ -29,10 +29,10 @@
 |J022 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.16 --pkb-sigma 1.5 --pkb-views 4 --pkb-placement random | 0.855 | 0.961 |
 |J023 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.14 --pkb-sigma 1.5 --pkb-views 4 --pkb-placement random | 0.856 | 0.962 |
 |J024 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.15 --pkb-sigma 1.8 --pkb-views 4 --pkb-placement random | 0.853 | 0.961 |
-|J025 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.13 --pkb-sigma 1.4 --pkb-views 4 --pkb-placement random | ? | ? |
-|J026 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.14 --pkb-sigma 1.4 --pkb-views 4 --pkb-placement random | ? | ? |
-|J027 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.14 --pkb-sigma 1.45 --pkb-views 4 --pkb-placement random | ? | ? |
-|J028 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.15 --pkb-sigma 1.4 --pkb-views 4 --pkb-placement random | ? | ? |
+|J025 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.13 --pkb-sigma 1.4 --pkb-views 4 --pkb-placement random | 0.852 | 0.963 |
+|J026 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.14 --pkb-sigma 1.4 --pkb-views 4 --pkb-placement random | 0.853 | 0.958 |
+|J027 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.14 --pkb-sigma 1.45 --pkb-views 4 --pkb-placement random | 0.853 | 0.960 |
+|J028 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.15 --pkb-sigma 1.4 --pkb-views 4 --pkb-placement random | 0.852 | 0.960 |
 
 ## G: G-series - CUB-200 fine-grid search
 
@@ -59,6 +59,7 @@
 |A007 | SoyAgeing-R6 | tiny_vit_21m_384.dist_in22k_ft_in1k | Base | --color-jitter --hflip --rotate | None | 0.695 | 0.899 |
 |A008 | Soybean | tiny_vit_21m_384.dist_in22k_ft_in1k | Base | --color-jitter --hflip --rotate | None | 0.520 | 0.800 |
 |A009 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | Base | --color-jitter --hflip --rotate | None | 0.896 | 0.985 |
+|A010 | Stanford_Cars | tiny_vit_21m_384.dist_in22k_ft_in1k | Base | --color-jitter --hflip --rotate | None | ? | ? |
 
 ## E: EfficientNet
 
