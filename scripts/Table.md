@@ -42,7 +42,7 @@
 |G02 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 15 --pkb-a-frac 0.12 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | ? | ? |
 |G03 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.10 --pkb-sigma 1.2 --pkb-views 6 --pkb-placement random | ? | ? |
 |G04 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.11 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | ? | ? |
-|G05 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.10 --pkb-sigma 1.0 --pkb-views 6 --pkb-placement random | ? | ? |
+|G05 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.10 --pkb-sigma 1.0 --pkb-views 6 --pkb-placement random | 0.855 | 0.961 |
 |G06 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.09 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | ? | ? |
 
 ## A: Tiny ViT
