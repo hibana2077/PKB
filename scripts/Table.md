@@ -34,6 +34,17 @@
 |J027 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.14 --pkb-sigma 1.45 --pkb-views 4 --pkb-placement random | ? | ? |
 |J028 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.15 --pkb-sigma 1.4 --pkb-views 4 --pkb-placement random | ? | ? |
 
+## G: G-series - CUB-200 fine-grid search
+
+| Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
+|------|---------|-------|------------|--------|----------|-----------|-----------|
+|G01 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.10 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|G02 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 15 --pkb-a-frac 0.12 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|G03 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.10 --pkb-sigma 1.2 --pkb-views 6 --pkb-placement random | ? | ? |
+|G04 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.11 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|G05 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.10 --pkb-sigma 1.0 --pkb-views 6 --pkb-placement random | ? | ? |
+|G06 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.09 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | ? | ? |
+
 ## A: Tiny ViT
 
 | Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
