@@ -4,15 +4,16 @@
 #PBS -l ngpus=1            
 #PBS -l ncpus=12            
 #PBS -l mem=20GB           
-#PBS -l walltime=24:05:00
+#PBS -l walltime=24:30:00  
 #PBS -l wd                  
 #PBS -l storage=scratch/rp06
 
 module load cuda/12.6.2
 # module load python3/3.10.4
 
+nvidia-smi >> gpu-info-v100.txt
 source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
-# Run training with PKB models
-python3 train.py --dataset stanford_cars --model tiny_vit_21m_384.dist_in22k_ft_in1k --pretrained --color-jitter --hflip --rotate --save-best >> A010.log
+# Run training (Stanford Cars, Resnet50, PKB augmentation)
+python3 train.py --dataset stanford_cars --model resnet50 --pretrained --color-jitter --hflip --rotate --save-best >> J029.log
