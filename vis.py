@@ -229,6 +229,88 @@ def plot_embedding_tsne_gradient(emb: np.ndarray, title: str, out_path: Path, th
     plt.close()
 
 
+def plot_embedding_tsne_gradient_with_class_legend(
+    emb: np.ndarray,
+    labels: np.ndarray,
+    title: str,
+    out_path: Path,
+    classes: List[str],
+    legend_fontsize: int = 20,
+    marker_size: int = 28,
+    theme_hex: str = THEME_PRIMARY,
+):
+    """t-SNE plot:
+    - Dot color: theme gradient based on 2D coords (same scalar mapping for all points)
+    - Class legend: distinguished by marker shape (not color)
+    - Larger markers for readability
+    """
+    plt.figure(figsize=(10, 10), facecolor=THEME_WHITE)
+    ax = plt.gca()
+    ax.set_facecolor(THEME_WHITE)
+
+    x = emb[:, 0]
+    y = emb[:, 1]
+    x_n = (x - x.min()) / (x.max() - x.min() + 1e-6)
+    y_n = (y - y.min()) / (y.max() - y.min() + 1e-6)
+    s_val = 0.5 * (x_n + y_n)
+
+    # Light-to-theme colormap
+    light_rgb = (1.0, 0.92, 0.92)
+    cmap = LinearSegmentedColormap.from_list('theme_grad', [light_rgb, theme_hex])
+
+    unique = np.unique(labels)
+    # Cycle through marker shapes to represent classes
+    marker_cycle = ['o', 's', '^', 'D', 'P', 'X', 'v', '<', '>', '*', 'h', 'H']
+
+    for i, cls in enumerate(unique):
+        pts = emb[labels == cls]
+        cls_mask = (labels == cls)
+        ax.scatter(
+            pts[:, 0],
+            pts[:, 1],
+            c=s_val[cls_mask],
+            cmap=cmap,
+            s=marker_size,
+            alpha=0.9,
+            edgecolors='none',
+            marker=marker_cycle[i % len(marker_cycle)],
+            label=str(classes[cls]),
+        )
+
+    ax.set_title(title, color=THEME_BLACK, fontsize=26, pad=20, weight='bold')
+    ax.tick_params(colors=THEME_BLACK, labelsize=16)
+    for spine in ax.spines.values():
+        spine.set_edgecolor(THEME_BLACK)
+
+    # Build proxy legend handles to reflect marker shapes with theme color
+    from matplotlib.lines import Line2D
+    handles = []
+    for i, cls in enumerate(unique):
+        handle = Line2D(
+            [], [],
+            linestyle='None',
+            marker=marker_cycle[i % len(marker_cycle)],
+            markerfacecolor=theme_hex,
+            markeredgecolor=THEME_BLACK,
+            markersize=max(8, marker_size // 2),
+            label=str(classes[cls]),
+        )
+        handles.append(handle)
+    ax.legend(
+        handles=handles,
+        fontsize=legend_fontsize,
+        facecolor=THEME_WHITE,
+        edgecolor=THEME_BLACK,
+        framealpha=0.95,
+        loc='best',
+        labelcolor=THEME_BLACK,
+    )
+    ax.set_xticks([]); ax.set_yticks([])
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=300, facecolor=plt.gcf().get_facecolor())
+    plt.close()
+
+
 def k_mid_selection(features: np.ndarray, k: int, seed: int) -> Tuple[np.ndarray, np.ndarray]:
     if k <= 0:
         raise ValueError('k must be > 0 for k-mid')
@@ -549,8 +631,10 @@ def main():
         if args.do_tsne:
             emb = embed_tsne(features_pca, seed=args.seed)
             np.save(out_dir / 'tsne.npy', emb)
-            # Plot t-SNE with per-class legend and larger font size
-            plot_embedding(emb, labels, 't-SNE Embedding', out_dir / 'tsne.png', dataset.classes, legend_fontsize=20, marker_size=20)
+            # Plot t-SNE with theme gradient color and class legend via marker shapes
+            plot_embedding_tsne_gradient_with_class_legend(
+                emb, labels, 't-SNE Embedding', out_dir / 'tsne.png', dataset.classes, legend_fontsize=22, marker_size=30
+            )
         # UMAP
         if args.do_umap:
             if umap is None:
