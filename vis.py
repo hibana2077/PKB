@@ -13,6 +13,7 @@ from torchvision import transforms
 import matplotlib
 matplotlib.use('Agg')  # ensure no GUI needed
 import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 from sklearn.cluster import KMeans
@@ -161,28 +162,51 @@ def embed_umap(x: np.ndarray, seed: int) -> np.ndarray:
 
 
 def plot_embedding(emb: np.ndarray, labels: np.ndarray, title: str, out_path: Path, classes: List[str]):
-    plt.figure(figsize=(10, 10), facecolor=THEME_BLACK)
+    # General plot: white background, black text, black frame; discrete colors per class
+    plt.figure(figsize=(10, 10), facecolor=THEME_WHITE)
     ax = plt.gca()
-    ax.set_facecolor(THEME_BLACK)
+    ax.set_facecolor(THEME_WHITE)
     unique = np.unique(labels)
     # Build a discrete color map leaning on red; cycle if many classes
     base_cmap = plt.get_cmap('tab20')
     colors = []
     for i, _ in enumerate(unique):
-        if i == 0:
-            colors.append(THEME_PRIMARY)
-        else:
-            colors.append(base_cmap(i % base_cmap.N))
+        colors.append(base_cmap(i % base_cmap.N))
     for i, cls in enumerate(unique):
         pts = emb[labels == cls]
         ax.scatter(pts[:, 0], pts[:, 1], s=18, color=colors[i], alpha=0.85, label=str(classes[cls]))
-    ax.set_title(title, color=THEME_WHITE, fontsize=26, pad=20, weight='bold')
-    ax.tick_params(colors=THEME_WHITE, labelsize=16)
+    ax.set_title(title, color=THEME_BLACK, fontsize=26, pad=20, weight='bold')
+    ax.tick_params(colors=THEME_BLACK, labelsize=16)
     for spine in ax.spines.values():
-        spine.set_edgecolor(THEME_PRIMARY)
-    legend = ax.legend(fontsize=12, facecolor=THEME_BLACK, edgecolor=THEME_PRIMARY, framealpha=0.9, loc='best')
-    for text in legend.get_texts():
-        text.set_color(THEME_WHITE)
+        spine.set_edgecolor(THEME_BLACK)
+    legend = ax.legend(fontsize=12, facecolor=THEME_WHITE, edgecolor=THEME_BLACK, framealpha=0.95, loc='best', labelcolor=THEME_BLACK)
+    ax.set_xticks([]); ax.set_yticks([])
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=300, facecolor=plt.gcf().get_facecolor())
+    plt.close()
+
+
+def plot_embedding_tsne_gradient(emb: np.ndarray, title: str, out_path: Path, theme_hex: str = THEME_PRIMARY):
+    """t-SNE plot with theme-colored gradient dots on white background.
+    Color encodes a simple scalar from the 2D coords to avoid repeated discrete colors.
+    """
+    plt.figure(figsize=(10, 10), facecolor=THEME_WHITE)
+    ax = plt.gca()
+    ax.set_facecolor(THEME_WHITE)
+    # Build a scalar for color mapping from coordinates (normalized x+y)/2
+    x = emb[:, 0]
+    y = emb[:, 1]
+    x_n = (x - x.min()) / (x.max() - x.min() + 1e-6)
+    y_n = (y - y.min()) / (y.max() - y.min() + 1e-6)
+    s_val = 0.5 * (x_n + y_n)
+    # Create a light-to-theme colormap
+    light_rgb = (1.0, 0.92, 0.92)  # very light red-ish
+    cmap = LinearSegmentedColormap.from_list('theme_grad', [light_rgb, theme_hex])
+    sc = ax.scatter(emb[:, 0], emb[:, 1], c=s_val, cmap=cmap, s=18, alpha=0.9, edgecolors='none')
+    ax.set_title(title, color=THEME_BLACK, fontsize=26, pad=20, weight='bold')
+    ax.tick_params(colors=THEME_BLACK, labelsize=16)
+    for spine in ax.spines.values():
+        spine.set_edgecolor(THEME_BLACK)
     ax.set_xticks([]); ax.set_yticks([])
     plt.tight_layout()
     plt.savefig(out_path, dpi=300, facecolor=plt.gcf().get_facecolor())
@@ -509,7 +533,8 @@ def main():
         if args.do_tsne:
             emb = embed_tsne(features_pca, seed=args.seed)
             np.save(out_dir / 'tsne.npy', emb)
-            plot_embedding(emb, labels, 't-SNE Embedding', out_dir / 'tsne.png', dataset.classes)
+            # Use gradient theme style for t-SNE to avoid repeated class colors
+            plot_embedding_tsne_gradient(emb, 't-SNE Embedding', out_dir / 'tsne.png', THEME_PRIMARY)
         # UMAP
         if args.do_umap:
             if umap is None:
