@@ -67,8 +67,8 @@ def main():
     # Generate mapping table
     table_path = os.path.join(THIS_DIR, "KFC_table.md")
     with open(table_path, "w", newline="\n") as f:
-        f.write("| Code | Placement | n | a_frac | sigma |\n")
-        f.write("|------|-----------|---|--------|-------|\n")
+        f.write("| Code | Placement | n | a_frac | sigma | Val Acc@1 | Val Acc@5 |\n")
+        f.write("|------|-----------|---|--------|-------|-----------|-----------|\n")
         idx = 1
         for placement in PLACEMENTS:  # placement major order
             for n in N_LIST:  # n ascending
@@ -76,7 +76,7 @@ def main():
                 for a in a_fracs:  # a_frac as specified order
                     for sigma in SIGMAS:  # sigma ascending
                         code = f"KFC{idx:03d}"
-                        f.write(f"| {code} | {placement} | {n} | {a:.2f} | {sigma} |\n")
+                        f.write(f"| {code} | {placement} | {n} | {a:.2f} | {sigma} | ? | ? |\n")
                         idx += 1
 
     # Write submit-all helper
