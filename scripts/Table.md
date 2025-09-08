@@ -35,7 +35,7 @@
 |J028 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.15 --pkb-sigma 1.4 --pkb-views 4 --pkb-placement random | 0.852 | 0.960 |
 |J029 | Stanford_Cars | Resnet50 | Base | --hflip --rotate | None | 0.918 | 0.985 |
 |J030 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.10 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | ? | ? |
-|J031 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.30 --pkb-sigma 3.0 --pkb-views 12 --pkb-placement random | ? | ? |
+|J031 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.30 --pkb-sigma 3.0 --pkb-views 12 --pkb-placement random | 0.442 | 0.704 |
 |J032 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 12 --pkb-a-frac 0.20 --pkb-sigma 3.0 --pkb-views 12 --pkb-placement random | ? | ? |
 |J033 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.30 --pkb-sigma 2.5 --pkb-views 10 --pkb-placement random | ? | ? |
 |J034 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.25 --pkb-sigma 3.5 --pkb-views 8 --pkb-placement random | 0.429 | 0.692 |
