@@ -1,5 +1,3 @@
-Tom，我幫你把你貼的論文（arXiv:2309.00399）抓重點，然後對照你的 PatchKeep-Blur（PKB）法，給一套「不改方法本身」也能成立的 novelty 與理論洞見（positioning＋實驗面向）說法。
-
 # 這篇在做什麼（對手方法輪廓）
 
 * 論點：**影像層級的隨機編輯（crop/mix/erase/blur）會破壞細粒度任務的關鍵辨識區**，因此他們改在**特徵空間**做增強，沿著「語意方向」平移特徵來擴增資料。語意方向由一個**Covariance Prediction Network（CovNet）**逐樣本預測，並用**meta-learning**聯合訓練以避免退化解。結果在 CUB、Cars、Aircraft、NABirds 等 FGVC 基準上提升並達到 SOTA。([ar5iv][1])

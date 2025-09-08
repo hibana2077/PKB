@@ -23,8 +23,5 @@
 
 | Model | Method | Cotton80 | Soybean | SoyGene | SoyGlobal | SoyAgeing | CUB_200 | Stanford_Cars |
 |-------|--------|----------|---------|---------|-----------|-----------|---------|---------------|
-| Resnet50 | Original Augmentations | 0.525 | 0.3883 | 0.7021 | 0.6715 | 0.2559 | 0.845 | ? |
-| Resnet50 | PKB + Original Augmentations | ? | ? | ? | ? | ? | 0.858 | ? |
 | Tiny_ViT | Original Augmentations | 0.675 | 0.4717 | 0.7850 | 0.7521 | 0.792 | 0.896 | ? |
 | Tiny_ViT | PKB + Original Augmentations | 0.700 | 0.657 | 0.838 | 0.682 | 0.8418 | 0.907 | ? |
-|

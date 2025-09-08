@@ -38,8 +38,8 @@
 |J031 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.30 --pkb-sigma 3.0 --pkb-views 12 --pkb-placement random | ? | ? |
 |J032 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 12 --pkb-a-frac 0.20 --pkb-sigma 3.0 --pkb-views 12 --pkb-placement random | ? | ? |
 |J033 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.30 --pkb-sigma 2.5 --pkb-views 10 --pkb-placement random | ? | ? |
-|J034 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.25 --pkb-sigma 3.5 --pkb-views 8 --pkb-placement random | ? | ? |
-|J035 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.20 --pkb-sigma 4.0 --pkb-views 6 --pkb-placement random | ? | ? |
+|J034 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.25 --pkb-sigma 3.5 --pkb-views 8 --pkb-placement random | 0.429 | 0.692 |
+|J035 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.20 --pkb-sigma 4.0 --pkb-views 6 --pkb-placement random | 0.433 | 0.646 |
 
 ## G: G-series - CUB-200 fine-grid search
 
