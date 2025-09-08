@@ -132,9 +132,16 @@ def ensure_dir(path: Path):
 
 
 def apply_pca(x: np.ndarray, dim: int) -> np.ndarray:
-    if dim <= 0 or x.shape[1] <= dim:
+    # Clamp n_components to valid range considering both samples and features
+    if dim <= 0:
         return x
-    pca = PCA(n_components=dim, random_state=0)
+    n_samples, n_features = x.shape[0], x.shape[1]
+    allowed_max = min(n_samples, n_features)
+    n_components = min(dim, allowed_max)
+    # If PCA won't reduce dimensionality, skip
+    if n_components >= n_features:
+        return x
+    pca = PCA(n_components=n_components, random_state=0)
     return pca.fit_transform(x)
 
 
