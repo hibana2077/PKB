@@ -161,7 +161,15 @@ def embed_umap(x: np.ndarray, seed: int) -> np.ndarray:
     return reducer.fit_transform(x)
 
 
-def plot_embedding(emb: np.ndarray, labels: np.ndarray, title: str, out_path: Path, classes: List[str]):
+def plot_embedding(
+    emb: np.ndarray,
+    labels: np.ndarray,
+    title: str,
+    out_path: Path,
+    classes: List[str],
+    legend_fontsize: int = 12,
+    marker_size: int = 18,
+):
     # General plot: white background, black text, black frame; discrete colors per class
     plt.figure(figsize=(10, 10), facecolor=THEME_WHITE)
     ax = plt.gca()
@@ -174,12 +182,20 @@ def plot_embedding(emb: np.ndarray, labels: np.ndarray, title: str, out_path: Pa
         colors.append(base_cmap(i % base_cmap.N))
     for i, cls in enumerate(unique):
         pts = emb[labels == cls]
-        ax.scatter(pts[:, 0], pts[:, 1], s=18, color=colors[i], alpha=0.85, label=str(classes[cls]))
+        ax.scatter(pts[:, 0], pts[:, 1], s=marker_size, color=colors[i], alpha=0.85, label=str(classes[cls]))
     ax.set_title(title, color=THEME_BLACK, fontsize=26, pad=20, weight='bold')
     ax.tick_params(colors=THEME_BLACK, labelsize=16)
     for spine in ax.spines.values():
         spine.set_edgecolor(THEME_BLACK)
-    legend = ax.legend(fontsize=12, facecolor=THEME_WHITE, edgecolor=THEME_BLACK, framealpha=0.95, loc='best', labelcolor=THEME_BLACK)
+    ax.legend(
+        fontsize=legend_fontsize,
+        facecolor=THEME_WHITE,
+        edgecolor=THEME_BLACK,
+        framealpha=0.95,
+        loc='best',
+        labelcolor=THEME_BLACK,
+        markerscale=1.2,
+    )
     ax.set_xticks([]); ax.set_yticks([])
     plt.tight_layout()
     plt.savefig(out_path, dpi=300, facecolor=plt.gcf().get_facecolor())
@@ -533,8 +549,8 @@ def main():
         if args.do_tsne:
             emb = embed_tsne(features_pca, seed=args.seed)
             np.save(out_dir / 'tsne.npy', emb)
-            # Use gradient theme style for t-SNE to avoid repeated class colors
-            plot_embedding_tsne_gradient(emb, 't-SNE Embedding', out_dir / 'tsne.png', THEME_PRIMARY)
+            # Plot t-SNE with per-class legend and larger font size
+            plot_embedding(emb, labels, 't-SNE Embedding', out_dir / 'tsne.png', dataset.classes, legend_fontsize=20, marker_size=20)
         # UMAP
         if args.do_umap:
             if umap is None:
