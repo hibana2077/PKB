@@ -1,9 +1,9 @@
 #!/bin/bash
 #PBS -P rp06
-#PBS -q gpuvolta
+#PBS -q dgxa100
 #PBS -l ngpus=1            
-#PBS -l ncpus=12            
-#PBS -l mem=20GB           
+#PBS -l ncpus=16            
+#PBS -l mem=32GB           
 #PBS -l walltime=02:00:00  
 #PBS -l wd                  
 #PBS -l storage=scratch/rp06
