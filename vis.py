@@ -407,6 +407,7 @@ def parse_args():
     p.add_argument('--resize-side', type=int, default=440)
     p.add_argument('--train-crop', type=int, default=384)
     p.add_argument('--split', default='test')
+    p.add_argument('--first-n-classes', type=int, default=-1, help='Use only the first N classes (dataset.classes order). -1=all')
     # feature extraction
     p.add_argument('--feature-layer', choices=['features', 'head_input'], default='features')
     p.add_argument('--max-samples', type=int, default=-1, help='Max total samples (after class sampling). -1=all')
@@ -449,10 +450,31 @@ def main():
 
     # DataLoader (full then subselect indices if needed)
     base_indices = list(range(len(dataset)))
+    # Limit to first-N classes (by dataset.classes order)
+    if args.first_n_classes > 0:
+        n = min(args.first_n_classes, len(dataset.classes))
+        allowed = set(dataset.classes[:n])
+        # Use internal dataframe to avoid loading images
+        class_names_series = dataset.data['class_name'] if hasattr(dataset, 'data') else None
+        if class_names_series is not None:
+            base_indices = [i for i, cn in enumerate(class_names_series.tolist()) if cn in allowed]
+        else:
+            # Fallback (may load images): keep indices whose label maps to first n classes
+            base_indices = [i for i in range(len(dataset)) if dataset[i][1] < n]
+
     if args.sample_per_class > 0:
-        # build quick labels list
-        labels_list = [dataset[i][1] for i in range(len(dataset))]
-        base_indices = collect_indices_by_class(labels_list, args.sample_per_class)
+        # Build labels list without loading images if possible
+        if hasattr(dataset, 'data'):
+            candidate_indices = base_indices
+            class_names = dataset.data.iloc[candidate_indices]['class_name'].tolist()
+            labels_list = [dataset.class_to_idx[cn] for cn in class_names]
+            selected_rel = collect_indices_by_class(labels_list, args.sample_per_class)
+            base_indices = [candidate_indices[i] for i in selected_rel]
+        else:
+            # Fallback (may load images)
+            labels_list = [dataset[i][1] for i in base_indices]
+            selected_rel = collect_indices_by_class(labels_list, args.sample_per_class)
+            base_indices = [base_indices[i] for i in selected_rel]
     if args.max_samples > 0 and len(base_indices) > args.max_samples:
         base_indices = base_indices[:args.max_samples]
 
