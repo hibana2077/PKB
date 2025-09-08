@@ -14,4 +14,4 @@ module load cuda/12.6.2
 source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ../..
-python3 vis.py --checkpoint ./outputs/best_resnet50_cotton80.pth --dataset cotton80 --split test --model resnet50 --do-tsne --out-dir ./outputs/vis_cotton_tsne_r50_test
+python3 vis.py --checkpoint ./outputs/best_resnet50_cotton80.pth --dataset cotton80 --split test --model resnet50 --do-tsne --first-n-classes 10 --out-dir ./outputs/vis_cotton_tsne_r50_test
