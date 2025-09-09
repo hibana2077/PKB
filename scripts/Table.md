@@ -56,6 +56,16 @@
 |G04 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.11 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | 0.855 | 0.966 |
 |G05 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.10 --pkb-sigma 1.0 --pkb-views 6 --pkb-placement random | 0.855 | 0.961 |
 |G06 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.09 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | 0.858 | 0.966 |
+|G07 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.09 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | — | — |
+|G08 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 22 --pkb-a-frac 0.09 --pkb-sigma 0.9 --pkb-views 8 --pkb-placement random | — | — |
+|G09 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.11 --pkb-sigma 0.9 --pkb-views 8 --pkb-placement random | — | — |
+|G10 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 24 --pkb-a-frac 0.08 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | — | — |
+|G11 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.11 --pkb-sigma 0.9 --pkb-views 10 --pkb-placement random | — | — |
+|G12 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.10 --pkb-sigma 0.8 --pkb-views 10 --pkb-placement random | — | — |
+|G13 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 22 --pkb-a-frac 0.08 --pkb-sigma 1.1 --pkb-views 8 --pkb-placement random | — | — |
+|G14 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.12 --pkb-sigma 0.9 --pkb-views 10 --pkb-placement random | — | — |
+|G15 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.10 --pkb-sigma 0.9 --pkb-views 10 --pkb-placement random | — | — |
+|G16 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.09 --pkb-sigma 1.1 --pkb-views 10 --pkb-placement random | — | — |
 
 ## A: Tiny ViT
 
