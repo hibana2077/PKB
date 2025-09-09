@@ -15,4 +15,4 @@ source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
 # Run training (Stanford Cars, Resnet50, PKB augmentation)
-python3 train.py --dataset stanford_cars --model resnet50 --pretrained --augmentation pkb --pkb-n 14 --pkb-a-frac 0.10 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random --hflip --rotate --save-best >> J030.log
+python3 train.py --dataset stanford_cars --model resnet50 --pretrained --augmentation pkb --pkb-n 6 --pkb-a-frac 0.12 --pkb-sigma 0.9 --pkb-views 8 --pkb-placement random --hflip --rotate --save-best >> J039.log

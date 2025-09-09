@@ -34,12 +34,17 @@
 |J027 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.14 --pkb-sigma 1.45 --pkb-views 4 --pkb-placement random | 0.853 | 0.960 |
 |J028 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.15 --pkb-sigma 1.4 --pkb-views 4 --pkb-placement random | 0.852 | 0.960 |
 |J029 | Stanford_Cars | Resnet50 | Base | --hflip --rotate | None | 0.918 | 0.985 |
-|J030 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.10 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|J030 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.10 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | 0.915 | 0.984 |
 |J031 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.30 --pkb-sigma 3.0 --pkb-views 12 --pkb-placement random | 0.442 | 0.704 |
 |J032 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 12 --pkb-a-frac 0.20 --pkb-sigma 3.0 --pkb-views 12 --pkb-placement random | 0.479 | 0.708 |
-|J033 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.30 --pkb-sigma 2.5 --pkb-views 10 --pkb-placement random | ? | ? |
+|J033 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.30 --pkb-sigma 2.5 --pkb-views 10 --pkb-placement random | 0.479 | 0.708 |
 |J034 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.25 --pkb-sigma 3.5 --pkb-views 8 --pkb-placement random | 0.429 | 0.692 |
 |J035 | Cotton80 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.20 --pkb-sigma 4.0 --pkb-views 6 --pkb-placement random | 0.433 | 0.646 |
+|J036 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 12 --pkb-a-frac 0.06 --pkb-sigma 0.6 --pkb-views 8 --pkb-placement random | ? | ? |
+|J037 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.03 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|J038 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.08 --pkb-sigma 0.5 --pkb-views 8 --pkb-placement random | ? | ? |
+|J039 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.12 --pkb-sigma 0.9 --pkb-views 8 --pkb-placement random | ? | ? |
+|J040 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.05 --pkb-sigma 0.3 --pkb-views 8 --pkb-placement random | ? | ? |
 
 ## G: G-series - CUB-200 fine-grid search
 
