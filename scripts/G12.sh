@@ -16,4 +16,4 @@ source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
 # Run training (CUB-200, Resnet50, PKB augmentation)
-python3 train.py --dataset cub_200_2011 --model resnet50 --pretrained --augmentation pkb --pkb-n 20 --pkb-a-frac 0.10 --pkb-sigma 0.8 --pkb-views 10 --pkb-placement random --hflip --rotate --save-best >> G12.log
+python3 train.py --dataset cub_200_2011 --model resnet50 --pretrained --augmentation pkb --pkb-n 18 --pkb-a-frac 0.09 --pkb-sigma 1.2 --pkb-views 7 --pkb-placement contiguous --hflip --rotate --save-best >> G12.log
