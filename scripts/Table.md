@@ -59,11 +59,15 @@
 |G07 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.09 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement random | 0.855 | 0.961 |
 |G08 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 22 --pkb-a-frac 0.09 --pkb-sigma 0.9 --pkb-views 8 --pkb-placement random | 0.855 | 0.962 |
 |G09 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.11 --pkb-sigma 0.9 --pkb-views 8 --pkb-placement random | 0.852 | 0.961 |
-|G10 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.08 --pkb-sigma 1.1 --pkb-views 8 --pkb-placement contiguous | ? | ? |
-|G11 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 19 --pkb-a-frac 0.08 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
-|G12 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.09 --pkb-sigma 1.2 --pkb-views 7 --pkb-placement contiguous | ? | ? |
-|G13 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.09 --pkb-sigma 1.1 --pkb-views 8 --pkb-placement contiguous | ? | ? |
-|G14 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.08 --pkb-sigma 1.0 --pkb-views 7 --pkb-placement contiguous | ? | ? |
+|G10 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.08 --pkb-sigma 1.1 --pkb-views 8 --pkb-placement contiguous | 0.853 | 0.962 |
+|G11 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 19 --pkb-a-frac 0.08 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement contiguous | 0.850 | 0.963 |
+|G12 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.09 --pkb-sigma 1.2 --pkb-views 7 --pkb-placement contiguous | 0.858 | 0.963 |
+|G13 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.09 --pkb-sigma 1.1 --pkb-views 8 --pkb-placement contiguous | 0.854 | 0.961 |
+|G14 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.08 --pkb-sigma 1.0 --pkb-views 7 --pkb-placement contiguous | 0.855 | 0.964 |
+|G15 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.28 --pkb-sigma 4.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+|G16 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.28 --pkb-sigma 4.0 --pkb-views 7 --pkb-placement contiguous | ? | ? |
+|G17 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.28 --pkb-sigma 4.0 --pkb-views 6 --pkb-placement contiguous | ? | ? |
+|G18 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.28 --pkb-sigma 4.0 --pkb-views 5 --pkb-placement contiguous | ? | ? |
 
 ## A: Tiny ViT
 
