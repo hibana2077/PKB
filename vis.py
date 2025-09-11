@@ -369,12 +369,30 @@ class GradCAM:
 
 
 def overlay_cam(image: torch.Tensor, cam: torch.Tensor) -> np.ndarray:
-    # image: (C,H,W) normalized; convert to uint8
+    # image: (C,H,W) normalized; cam: (Hc,Wc) or (1,Hc,Wc)
+    # 1) Unnormalize image to [0,1] for visualization
     mean = torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
     std = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
-    img = (image.cpu() * std + mean).clamp(0, 1).permute(1, 2, 0).numpy()
-    heatmap = cam.squeeze().cpu().numpy()
-    heatmap = plt.get_cmap('jet')(heatmap)[:, :, :3]
+    img_t = (image.cpu() * std + mean).clamp(0, 1)
+    H, W = img_t.shape[-2:]
+    img = img_t.permute(1, 2, 0).numpy()  # (H,W,3)
+
+    # 2) Upsample CAM to image size and normalize to [0,1]
+    if cam.dim() == 2:
+        cam_4d = cam.unsqueeze(0).unsqueeze(0)  # (1,1,Hc,Wc)
+    elif cam.dim() == 3:  # (1,Hc,Wc)
+        cam_4d = cam.unsqueeze(0)  # (1,1,Hc,Wc)
+    else:
+        raise ValueError(f"Unexpected CAM dims: {tuple(cam.shape)}")
+    cam_up = F.interpolate(cam_4d.float(), size=(H, W), mode='bilinear', align_corners=False).squeeze()
+    # Ensure 2D array
+    if cam_up.dim() == 3:
+        cam_up = cam_up[0]
+    cam_up = cam_up - cam_up.min()
+    cam_up = cam_up / (cam_up.max() + 1e-6)
+    heatmap = plt.get_cmap('jet')(cam_up.cpu().numpy())[:, :, :3]  # (H,W,3) in [0,1]
+
+    # 3) Blend heatmap with image
     overlay = 0.5 * img + 0.5 * heatmap
     overlay = np.clip(overlay, 0, 1)
     return (overlay * 255).astype(np.uint8)
@@ -407,7 +425,12 @@ def run_gradcam(args, model: nn.Module, device: torch.device, dataset: UFGVCData
         img = img.to(device)
         cam = cam_engine(img)
         overlay = overlay_cam(img[0], cam[0])
-        out_path = out_dir / f'gradcam_{saved:03d}_class{int(label)}.png'
+        # Support tensor labels with batch_size=1
+        try:
+            label_int = int(label.item() if torch.is_tensor(label) else label)
+        except Exception:
+            label_int = -1
+        out_path = out_dir / f'gradcam_{saved:03d}_class{label_int}.png'
         from imageio import imwrite  # lightweight dependency via imageio (not in req) -> fallback to plt
         try:
             imwrite(out_path, overlay)
@@ -494,7 +517,11 @@ def run_vit_attention(args, model: nn.Module, device: torch.device, dataset: UFG
         heat_up = heat_up.cpu().numpy()
         # Overlay (use custom red colormap)
         overlay = vit_overlay(img[0], heat_up)
-        out_path = out_dir / f'vit_attn_{saved:03d}_class{int(label)}.png'
+        try:
+            label_int = int(label.item() if torch.is_tensor(label) else label)
+        except Exception:
+            label_int = -1
+        out_path = out_dir / f'vit_attn_{saved:03d}_class{label_int}.png'
         try:
             from imageio import imwrite
             imwrite(out_path, overlay)
