@@ -14,5 +14,4 @@ module load cuda/12.6.2
 source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ../..
-# python3 vis.py --checkpoint ./outputs/best_resnet50_stanford_cars.pth --dataset stanford_cars --split test --model resnet50 --do-tsne --first-n-classes 10 --out-dir ./outputs/vis_stanford_cars_tsne_r50_test
-python3 vis.py --checkpoint ./outputs/best_resnet50_stanford_cars.pth --do-gradcam --gradcam-samples 8 --device cuda --out-dir ./outputs/vis_gradcam_stanford_cars_tsne_r50_test
+python3 vis.py --checkpoint ./outputs/best_resnet50_stanford_cars.pth --dataset stanford_cars --model resnet50 --split test --do-gradcam --gradcam-samples 8 --device cuda --out-dir ./outputs/vis_gradcam_stanford_cars_tsne_r50_test
