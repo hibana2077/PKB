@@ -1,0 +1,346 @@
+TinyVit(
+  (patch_embed): PatchEmbed(
+    (conv1): ConvNorm(
+      (conv): Conv2d(3, 48, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+      (bn): BatchNorm2d(48, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+    (act): GELU(approximate='none')
+    (conv2): ConvNorm(
+      (conv): Conv2d(48, 96, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+      (bn): BatchNorm2d(96, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+  )
+  (stages): Sequential(
+    (0): ConvLayer(
+      (blocks): Sequential(
+        (0): MBConv(
+          (conv1): ConvNorm(
+            (conv): Conv2d(96, 384, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(384, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (act1): GELU(approximate='none')
+          (conv2): ConvNorm(
+            (conv): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=384, bias=False)
+            (bn): BatchNorm2d(384, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (act2): GELU(approximate='none')
+          (conv3): ConvNorm(
+            (conv): Conv2d(384, 96, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(96, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (act3): GELU(approximate='none')
+          (drop_path): Identity()
+        )
+        (1): MBConv(
+          (conv1): ConvNorm(
+            (conv): Conv2d(96, 384, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(384, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (act1): GELU(approximate='none')
+          (conv2): ConvNorm(
+            (conv): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=384, bias=False)
+            (bn): BatchNorm2d(384, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (act2): GELU(approximate='none')
+          (conv3): ConvNorm(
+            (conv): Conv2d(384, 96, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(96, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (act3): GELU(approximate='none')
+          (drop_path): DropPath(drop_prob=0.009)
+        )
+      )
+    )
+    (1): TinyVitStage(
+      dim=192, depth=2
+      (downsample): PatchMerging(
+        (conv1): ConvNorm(
+          (conv): Conv2d(96, 192, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn): BatchNorm2d(192, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (act1): GELU(approximate='none')
+        (conv2): ConvNorm(
+          (conv): Conv2d(192, 192, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=192, bias=False)
+          (bn): BatchNorm2d(192, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (act2): GELU(approximate='none')
+        (conv3): ConvNorm(
+          (conv): Conv2d(192, 192, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn): BatchNorm2d(192, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (blocks): Sequential(
+        (0): TinyVitBlock(
+          dim=192, num_heads=6, window_size=12, mlp_ratio=4.0
+          (attn): Attention(
+            (norm): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (qkv): Linear(in_features=192, out_features=576, bias=True)
+            (proj): Linear(in_features=192, out_features=192, bias=True)
+          )
+          (drop_path1): DropPath(drop_prob=0.018)
+          (mlp): NormMlp(
+            (norm): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (fc1): Linear(in_features=192, out_features=768, bias=True)
+            (act): GELU(approximate='none')
+            (drop1): Dropout(p=0.0, inplace=False)
+            (fc2): Linear(in_features=768, out_features=192, bias=True)
+            (drop2): Dropout(p=0.0, inplace=False)
+          )
+          (drop_path2): DropPath(drop_prob=0.018)
+          (local_conv): ConvNorm(
+            (conv): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=192, bias=False)
+            (bn): BatchNorm2d(192, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+        )
+        (1): TinyVitBlock(
+          dim=192, num_heads=6, window_size=12, mlp_ratio=4.0
+          (attn): Attention(
+            (norm): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (qkv): Linear(in_features=192, out_features=576, bias=True)
+            (proj): Linear(in_features=192, out_features=192, bias=True)
+          )
+          (drop_path1): DropPath(drop_prob=0.027)
+          (mlp): NormMlp(
+            (norm): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (fc1): Linear(in_features=192, out_features=768, bias=True)
+            (act): GELU(approximate='none')
+            (drop1): Dropout(p=0.0, inplace=False)
+            (fc2): Linear(in_features=768, out_features=192, bias=True)
+            (drop2): Dropout(p=0.0, inplace=False)
+          )
+          (drop_path2): DropPath(drop_prob=0.027)
+          (local_conv): ConvNorm(
+            (conv): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=192, bias=False)
+            (bn): BatchNorm2d(192, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+        )
+      )
+    )
+    (2): TinyVitStage(
+      dim=384, depth=6
+      (downsample): PatchMerging(
+        (conv1): ConvNorm(
+          (conv): Conv2d(192, 384, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn): BatchNorm2d(384, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (act1): GELU(approximate='none')
+        (conv2): ConvNorm(
+          (conv): Conv2d(384, 384, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=384, bias=False)
+          (bn): BatchNorm2d(384, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (act2): GELU(approximate='none')
+        (conv3): ConvNorm(
+          (conv): Conv2d(384, 384, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn): BatchNorm2d(384, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (blocks): Sequential(
+        (0): TinyVitBlock(
+          dim=384, num_heads=12, window_size=24, mlp_ratio=4.0
+          (attn): Attention(
+            (norm): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (qkv): Linear(in_features=384, out_features=1152, bias=True)
+            (proj): Linear(in_features=384, out_features=384, bias=True)
+          )
+          (drop_path1): DropPath(drop_prob=0.036)
+          (mlp): NormMlp(
+            (norm): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (fc1): Linear(in_features=384, out_features=1536, bias=True)
+            (act): GELU(approximate='none')
+            (drop1): Dropout(p=0.0, inplace=False)
+            (fc2): Linear(in_features=1536, out_features=384, bias=True)
+            (drop2): Dropout(p=0.0, inplace=False)
+          )
+          (drop_path2): DropPath(drop_prob=0.036)
+          (local_conv): ConvNorm(
+            (conv): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=384, bias=False)
+            (bn): BatchNorm2d(384, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+        )
+        (1): TinyVitBlock(
+          dim=384, num_heads=12, window_size=24, mlp_ratio=4.0
+          (attn): Attention(
+            (norm): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (qkv): Linear(in_features=384, out_features=1152, bias=True)
+            (proj): Linear(in_features=384, out_features=384, bias=True)
+          )
+          (drop_path1): DropPath(drop_prob=0.045)
+          (mlp): NormMlp(
+            (norm): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (fc1): Linear(in_features=384, out_features=1536, bias=True)
+            (act): GELU(approximate='none')
+            (drop1): Dropout(p=0.0, inplace=False)
+            (fc2): Linear(in_features=1536, out_features=384, bias=True)
+            (drop2): Dropout(p=0.0, inplace=False)
+          )
+          (drop_path2): DropPath(drop_prob=0.045)
+          (local_conv): ConvNorm(
+            (conv): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=384, bias=False)
+            (bn): BatchNorm2d(384, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+        )
+        (2): TinyVitBlock(
+          dim=384, num_heads=12, window_size=24, mlp_ratio=4.0
+          (attn): Attention(
+            (norm): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (qkv): Linear(in_features=384, out_features=1152, bias=True)
+            (proj): Linear(in_features=384, out_features=384, bias=True)
+          )
+          (drop_path1): DropPath(drop_prob=0.055)
+          (mlp): NormMlp(
+            (norm): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (fc1): Linear(in_features=384, out_features=1536, bias=True)
+            (act): GELU(approximate='none')
+            (drop1): Dropout(p=0.0, inplace=False)
+            (fc2): Linear(in_features=1536, out_features=384, bias=True)
+            (drop2): Dropout(p=0.0, inplace=False)
+          )
+          (drop_path2): DropPath(drop_prob=0.055)
+          (local_conv): ConvNorm(
+            (conv): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=384, bias=False)
+            (bn): BatchNorm2d(384, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+        )
+        (3): TinyVitBlock(
+          dim=384, num_heads=12, window_size=24, mlp_ratio=4.0
+          (attn): Attention(
+            (norm): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (qkv): Linear(in_features=384, out_features=1152, bias=True)
+            (proj): Linear(in_features=384, out_features=384, bias=True)
+          )
+          (drop_path1): DropPath(drop_prob=0.064)
+          (mlp): NormMlp(
+            (norm): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (fc1): Linear(in_features=384, out_features=1536, bias=True)
+            (act): GELU(approximate='none')
+            (drop1): Dropout(p=0.0, inplace=False)
+            (fc2): Linear(in_features=1536, out_features=384, bias=True)
+            (drop2): Dropout(p=0.0, inplace=False)
+          )
+          (drop_path2): DropPath(drop_prob=0.064)
+          (local_conv): ConvNorm(
+            (conv): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=384, bias=False)
+            (bn): BatchNorm2d(384, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+        )
+        (4): TinyVitBlock(
+          dim=384, num_heads=12, window_size=24, mlp_ratio=4.0
+          (attn): Attention(
+            (norm): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (qkv): Linear(in_features=384, out_features=1152, bias=True)
+            (proj): Linear(in_features=384, out_features=384, bias=True)
+          )
+          (drop_path1): DropPath(drop_prob=0.073)
+          (mlp): NormMlp(
+            (norm): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (fc1): Linear(in_features=384, out_features=1536, bias=True)
+            (act): GELU(approximate='none')
+            (drop1): Dropout(p=0.0, inplace=False)
+            (fc2): Linear(in_features=1536, out_features=384, bias=True)
+            (drop2): Dropout(p=0.0, inplace=False)
+          )
+          (drop_path2): DropPath(drop_prob=0.073)
+          (local_conv): ConvNorm(
+            (conv): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=384, bias=False)
+            (bn): BatchNorm2d(384, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+        )
+        (5): TinyVitBlock(
+          dim=384, num_heads=12, window_size=24, mlp_ratio=4.0
+          (attn): Attention(
+            (norm): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (qkv): Linear(in_features=384, out_features=1152, bias=True)
+            (proj): Linear(in_features=384, out_features=384, bias=True)
+          )
+          (drop_path1): DropPath(drop_prob=0.082)
+          (mlp): NormMlp(
+            (norm): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (fc1): Linear(in_features=384, out_features=1536, bias=True)
+            (act): GELU(approximate='none')
+            (drop1): Dropout(p=0.0, inplace=False)
+            (fc2): Linear(in_features=1536, out_features=384, bias=True)
+            (drop2): Dropout(p=0.0, inplace=False)
+          )
+          (drop_path2): DropPath(drop_prob=0.082)
+          (local_conv): ConvNorm(
+            (conv): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=384, bias=False)
+            (bn): BatchNorm2d(384, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+        )
+      )
+    )
+    (3): TinyVitStage(
+      dim=576, depth=2
+      (downsample): PatchMerging(
+        (conv1): ConvNorm(
+          (conv): Conv2d(384, 576, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn): BatchNorm2d(576, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (act1): GELU(approximate='none')
+        (conv2): ConvNorm(
+          (conv): Conv2d(576, 576, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=576, bias=False)
+          (bn): BatchNorm2d(576, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (act2): GELU(approximate='none')
+        (conv3): ConvNorm(
+          (conv): Conv2d(576, 576, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn): BatchNorm2d(576, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (blocks): Sequential(
+        (0): TinyVitBlock(
+          dim=576, num_heads=18, window_size=12, mlp_ratio=4.0
+          (attn): Attention(
+            (norm): LayerNorm((576,), eps=1e-05, elementwise_affine=True)
+            (qkv): Linear(in_features=576, out_features=1728, bias=True)
+            (proj): Linear(in_features=576, out_features=576, bias=True)
+          )
+          (drop_path1): DropPath(drop_prob=0.091)
+          (mlp): NormMlp(
+            (norm): LayerNorm((576,), eps=1e-05, elementwise_affine=True)
+            (fc1): Linear(in_features=576, out_features=2304, bias=True)
+            (act): GELU(approximate='none')
+            (drop1): Dropout(p=0.0, inplace=False)
+            (fc2): Linear(in_features=2304, out_features=576, bias=True)
+            (drop2): Dropout(p=0.0, inplace=False)
+          )
+          (drop_path2): DropPath(drop_prob=0.091)
+          (local_conv): ConvNorm(
+            (conv): Conv2d(576, 576, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=576, bias=False)
+            (bn): BatchNorm2d(576, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+        )
+        (1): TinyVitBlock(
+          dim=576, num_heads=18, window_size=12, mlp_ratio=4.0
+          (attn): Attention(
+            (norm): LayerNorm((576,), eps=1e-05, elementwise_affine=True)
+            (qkv): Linear(in_features=576, out_features=1728, bias=True)
+            (proj): Linear(in_features=576, out_features=576, bias=True)
+          )
+          (drop_path1): DropPath(drop_prob=0.100)
+          (mlp): NormMlp(
+            (norm): LayerNorm((576,), eps=1e-05, elementwise_affine=True)
+            (fc1): Linear(in_features=576, out_features=2304, bias=True)
+            (act): GELU(approximate='none')
+            (drop1): Dropout(p=0.0, inplace=False)
+            (fc2): Linear(in_features=2304, out_features=576, bias=True)
+            (drop2): Dropout(p=0.0, inplace=False)
+          )
+          (drop_path2): DropPath(drop_prob=0.100)
+          (local_conv): ConvNorm(
+            (conv): Conv2d(576, 576, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=576, bias=False)
+            (bn): BatchNorm2d(576, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+        )
+      )
+    )
+  )
+  (head): NormMlpClassifierHead(
+    (global_pool): SelectAdaptivePool2d(pool_type=avg, flatten=Identity())
+    (norm): LayerNorm2d((576,), eps=1e-05, elementwise_affine=True)
+    (flatten): Flatten(start_dim=1, end_dim=-1)
+    (pre_logits): Identity()
+    (drop): Dropout(p=0.0, inplace=False)
+    (fc): Linear(in_features=576, out_features=1000, bias=True)
+  )
+)

@@ -454,15 +454,12 @@ def run_vit_attention(args, model: nn.Module, device: torch.device, dataset: UFG
     """
     if args.vit_attn_samples <= 0:
         return
-    # Heuristic: require modules named 'blocks' (timm ViT) with attention submodules having 'attn_drop'
+    # Support both timm ViT (has `blocks`) and TinyViT (has `stages` with TinyVitBlock).
     if hasattr(model, 'module'):
         model_core = model.module
     else:
         model_core = model
-    if not hasattr(model_core, 'blocks'):
-        print('ViT attention requested but model has no attribute blocks; skipping.')
-        return
-    blocks = list(model_core.blocks)
+
     attn_hooks = []
 
     def make_hook(store_list):
@@ -473,68 +470,185 @@ def run_vit_attention(args, model: nn.Module, device: torch.device, dataset: UFG
     ensure_dir(out_dir)
     loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=args.num_workers)
     saved = 0
-    for img, label in loader:
-        attn_mats = []
-        # register hooks for this sample
-        for b in blocks:
-            if hasattr(b, 'attn') and hasattr(b.attn, 'attn_drop'):
-                attn_hooks.append(b.attn.attn_drop.register_forward_hook(make_hook(attn_mats)))
-        img = img.to(device)
-        _ = model_core(img)
-        # remove hooks
-        for h in attn_hooks:
-            h.remove()
-        attn_hooks.clear()
-        if not attn_mats:
-            print('No attention matrices captured; aborting ViT attention generation.')
-            break
-        # attention rollout
-        # Order of attn_mats corresponds to forward order
-        rollout = None
-        for A in attn_mats:  # A: (1, heads, T, T)
-            A_mean = A.mean(1)  # (1,T,T)
-            I = torch.eye(A_mean.size(-1)).unsqueeze(0)
-            A_aug = A_mean + I
-            A_aug = A_aug / A_aug.sum(dim=-1, keepdim=True)
-            if rollout is None:
-                rollout = A_aug
+
+    # Case A: Standard ViT with global attention and cls token
+    if hasattr(model_core, 'blocks'):
+        blocks = list(model_core.blocks)
+        for img, label in loader:
+            attn_mats = []
+            for b in blocks:
+                if hasattr(b, 'attn') and hasattr(b.attn, 'attn_drop'):
+                    attn_hooks.append(b.attn.attn_drop.register_forward_hook(make_hook(attn_mats)))
+            img = img.to(device)
+            _ = model_core(img)
+            for h in attn_hooks:
+                h.remove()
+            attn_hooks.clear()
+            if not attn_mats:
+                print('No attention matrices captured; aborting ViT attention generation.')
+                break
+            rollout = None
+            for A in attn_mats:  # A: (1, heads, T, T)
+                A_mean = A.mean(1)  # (1,T,T)
+                I = torch.eye(A_mean.size(-1)).unsqueeze(0)
+                A_aug = A_mean + I
+                A_aug = A_aug / A_aug.sum(dim=-1, keepdim=True)
+                rollout = A_aug if rollout is None else A_aug @ rollout
+            cls_attn = rollout[0, 0, 1:]
+            tokens = cls_attn.shape[0]
+            side = int(tokens ** 0.5)
+            if side * side != tokens:
+                side = int(np.ceil(tokens ** 0.5))
+                pad_len = side * side - tokens
+                cls_attn = torch.cat([cls_attn, cls_attn.new_zeros(pad_len)], dim=0)
+            heat = cls_attn.view(1, 1, side, side)
+            heat = heat / (heat.max() + 1e-6)
+            heat_up = F.interpolate(heat, size=img.shape[-2:], mode='bilinear', align_corners=False)[0, 0]
+            heat_up = heat_up.cpu().numpy()
+            overlay = vit_overlay(img[0], heat_up)
+            try:
+                label_int = int(label.item() if torch.is_tensor(label) else label)
+            except Exception:
+                label_int = -1
+            out_path = out_dir / f'vit_attn_{saved:03d}_class{label_int}.png'
+            try:
+                from imageio import imwrite
+                imwrite(out_path, overlay)
+            except Exception:
+                plt.figure(figsize=(4, 4))
+                plt.imshow(overlay)
+                plt.axis('off')
+                plt.tight_layout()
+                plt.savefig(out_path, dpi=200)
+                plt.close()
+            saved += 1
+            if saved >= args.vit_attn_samples:
+                break
+
+    # Case B: TinyViT style with window attention under `stages`
+    elif hasattr(model_core, 'stages'):
+        # choose the last block of the last stage as representative
+        stages = list(model_core.stages)
+        if not stages:
+            print('Model has stages but empty; skipping vit attention.')
+            return
+        last_stage = stages[-1]
+        if not hasattr(last_stage, 'blocks') or len(last_stage.blocks) == 0:
+            print('Last stage has no blocks; skipping vit attention.')
+            return
+        target_block = last_stage.blocks[-1]
+        if not hasattr(target_block, 'attn') or not hasattr(target_block.attn, 'qkv'):
+            print('TinyViT block without attn.qkv; cannot capture attention.')
+            return
+        window_size = getattr(target_block, 'window_size', None)
+        if window_size is None:
+            print('TinyViT window_size not found; cannot map windows.')
+            return
+
+        qkv_store = {}
+        feat_shape = {}
+
+        def qkv_hook(m, inp, out):
+            # out: (B*nW, tokens, 3*dim)
+            qkv_store['out'] = out.detach().cpu()
+
+        def feat_hook(m, inp, out):
+            # capture spatial size at block input (B, C, H, W)
+            x = inp[0]
+            if x.dim() == 4:
+                feat_shape['HW'] = (int(x.shape[-2]), int(x.shape[-1]))
+
+        # hook qkv and a conv to get H,W
+        h1 = target_block.attn.qkv.register_forward_hook(qkv_hook)
+        # prefer local_conv input for HW; fallback to downsample or stage conv
+        local_conv = getattr(target_block, 'local_conv', None)
+        if local_conv is not None and hasattr(local_conv, 'conv'):
+            h2 = local_conv.conv.register_forward_hook(feat_hook)
+        else:
+            # generic: hook the block itself to get (B,C,H,W) if possible
+            h2 = target_block.register_forward_hook(feat_hook)
+
+        for img, label in loader:
+            qkv_store.clear(); feat_shape.clear()
+            img = img.to(device)
+            _ = model_core(img)
+            if 'out' not in qkv_store or 'HW' not in feat_shape:
+                print('Failed to capture TinyViT qkv or feature shape; abort.')
+                break
+
+            qkv = qkv_store['out']  # cpu tensor
+            Hs, Ws = feat_shape['HW']
+            ws = int(window_size)
+            if Hs % ws != 0 or Ws % ws != 0:
+                print(f'Feature size {(Hs, Ws)} not divisible by window_size {ws}; using fallback resize.')
+            B = 1  # loader uses batch_size=1
+            nW = qkv.shape[0] // B
+            tokens = qkv.shape[1]
+            dim3 = qkv.shape[2]
+            dim = dim3 // 3
+            # infer heads
+            num_heads = getattr(target_block.attn, 'num_heads', 1)
+            head_dim = dim // num_heads
+            # compute attention per window
+            qkv = qkv.view(B, nW, tokens, 3, num_heads, head_dim).permute(0, 1, 3, 4, 2, 5).contiguous()
+            # qkv shape: (B, nW, 3, heads, tokens, head_dim)
+            q = qkv[:, :, 0]
+            k = qkv[:, :, 1]
+            # attn: (B, nW, heads, tokens, tokens)
+            attn = torch.matmul(q, k.transpose(-2, -1)) / (head_dim ** 0.5)
+            attn = torch.softmax(attn, dim=-1)
+            attn_mean = attn.mean(dim=2)  # (B, nW, T, T)
+            # token importance as mean over queries -> (B, nW, T)
+            token_imp = attn_mean.mean(dim=2)
+            # fold windows back to (H_s, W_s)
+            if Hs % ws == 0 and Ws % ws == 0 and (nW == (Hs // ws) * (Ws // ws)) and (tokens == ws * ws):
+                nWh = Hs // ws
+                nWw = Ws // ws
+                grid = token_imp.view(B, nWh, nWw, ws, ws)
+                heat = grid.permute(0, 1, 3, 2, 4).contiguous().view(B, 1, Hs, Ws)
             else:
-                rollout = A_aug @ rollout  # matrix multiply
-        # CLS attention to patches
-        # rollout shape (1,T,T); take CLS row (index 0) excluding CLS token itself
-        cls_attn = rollout[0, 0, 1:]  # (T-1,)
-        tokens = cls_attn.shape[0]
-        side = int(tokens ** 0.5)
-        if side * side != tokens:
-            # fallback reshape by trying nearest square; pad if necessary
-            side = int(np.ceil(tokens ** 0.5))
-            pad_len = side * side - tokens
-            cls_attn = torch.cat([cls_attn, cls_attn.new_zeros(pad_len)], dim=0)
-        heat = cls_attn.view(1, 1, side, side)
-        heat = heat / (heat.max() + 1e-6)
-        # upscale to image size
-        heat_up = F.interpolate(heat, size=img.shape[-2:], mode='bilinear', align_corners=False)[0, 0]
-        heat_up = heat_up.cpu().numpy()
-        # Overlay (use custom red colormap)
-        overlay = vit_overlay(img[0], heat_up)
-        try:
-            label_int = int(label.item() if torch.is_tensor(label) else label)
-        except Exception:
-            label_int = -1
-        out_path = out_dir / f'vit_attn_{saved:03d}_class{label_int}.png'
-        try:
-            from imageio import imwrite
-            imwrite(out_path, overlay)
-        except Exception:
-            plt.figure(figsize=(4, 4))
-            plt.imshow(overlay)
-            plt.axis('off')
-            plt.tight_layout()
-            plt.savefig(out_path, dpi=200)
-            plt.close()
-        saved += 1
-        if saved >= args.vit_attn_samples:
-            break
+                # fallback: assume square windows layout
+                nWh = int(np.sqrt(nW))
+                nWw = max(1, nW // max(1, nWh))
+                # pad if needed
+                need = nWh * nWw - nW
+                if need > 0:
+                    pad = torch.zeros(B, need, tokens, dtype=token_imp.dtype)
+                    token_imp = torch.cat([token_imp, pad], dim=1)
+                # reshape and tile windows
+                grid = token_imp.view(B, nWh, nWw, int(np.sqrt(tokens)), int(np.sqrt(tokens)))
+                Hs2 = nWh * grid.shape[3]
+                Ws2 = nWw * grid.shape[4]
+                heat = grid.permute(0, 1, 3, 2, 4).contiguous().view(B, 1, Hs2, Ws2)
+                # resize to approximate stage size
+                heat = F.interpolate(heat, size=(Hs, Ws), mode='bilinear', align_corners=False)
+
+            # normalize and upsample to image
+            heat = heat / (heat.amax(dim=[2, 3], keepdim=True) + 1e-6)
+            heat_up = F.interpolate(heat, size=img.shape[-2:], mode='bilinear', align_corners=False)[0, 0].cpu().numpy()
+            overlay = vit_overlay(img[0], heat_up)
+            try:
+                label_int = int(label.item() if torch.is_tensor(label) else label)
+            except Exception:
+                label_int = -1
+            out_path = out_dir / f'vit_attn_{saved:03d}_class{label_int}.png'
+            try:
+                from imageio import imwrite
+                imwrite(out_path, overlay)
+            except Exception:
+                plt.figure(figsize=(4, 4))
+                plt.imshow(overlay)
+                plt.axis('off')
+                plt.tight_layout()
+                plt.savefig(out_path, dpi=200)
+                plt.close()
+            saved += 1
+            if saved >= args.vit_attn_samples:
+                break
+
+        h1.remove(); h2.remove()
+    else:
+        print('Model is not a ViT/TinyViT style (no blocks or stages); skipping vit attention.')
 
 
 def vit_overlay(image: torch.Tensor, heatmap: np.ndarray) -> np.ndarray:
