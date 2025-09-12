@@ -91,15 +91,15 @@
 
 | Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
 |------|---------|-------|------------|--------|----------|-----------|-----------|
-| P01  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 19 --pkb-a-frac 0.085 --pkb-sigma 1.2 --pkb-views 9 --pkb-placement contiguous  | ? | ? |
-| P02  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.09 --pkb-sigma 1.15 --pkb-views 9 --pkb-placement contiguous  | ? | ? |
-| P03  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.085 --pkb-sigma 1.1 --pkb-views 9 --pkb-placement contiguous  | ? | ? |
+| P01  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 19 --pkb-a-frac 0.085 --pkb-sigma 1.2 --pkb-views 8 --pkb-placement contiguous  | ? | ? |
+| P02  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.09 --pkb-sigma 1.15 --pkb-views 8 --pkb-placement contiguous  | ? | ? |
+| P03  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.085 --pkb-sigma 1.1 --pkb-views 8 --pkb-placement contiguous  | ? | ? |
 | P04  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.09 --pkb-sigma 1.2 --pkb-views 8 --pkb-placement contiguous   | ? | ? |
 | P05  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.085 --pkb-sigma 1.2 --pkb-views 8 --pkb-placement contiguous  | ? | ? |
 | P06  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 21 --pkb-a-frac 0.085 --pkb-sigma 1.15 --pkb-views 8 --pkb-placement contiguous | ? | ? |
-| P07  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 19 --pkb-a-frac 0.09 --pkb-sigma 1.1 --pkb-views 9 --pkb-placement contiguous   | ? | ? |
+| P07  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 19 --pkb-a-frac 0.09 --pkb-sigma 1.1 --pkb-views 7 --pkb-placement contiguous   | ? | ? |
 | P08  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.085 --pkb-sigma 1.2 --pkb-views 7 --pkb-placement contiguous  | ? | ? |
-| P09  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.08 --pkb-sigma 1.2 --pkb-views 9 --pkb-placement contiguous   | ? | ? |
+| P09  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.08 --pkb-sigma 1.2 --pkb-views 8 --pkb-placement contiguous   | ? | ? |
 | P10  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 19 --pkb-a-frac 0.085 --pkb-sigma 1.15 --pkb-views 8 --pkb-placement contiguous | ? | ? |
 
 ## A: Tiny ViT
