@@ -43,16 +43,16 @@ python3 train.py --dataset {DATASET} --model {MODEL} --pretrained --augmentation
 """
 
 def main():
-    # Generate EBxxx scripts in deterministic order
+    # Generate EBSCxxx scripts in deterministic order
     os.makedirs(THIS_DIR, exist_ok=True)
-    submit_lines = ["#!/bin/bash", "set -e", "# Submit all EB jobs in order"]
+    submit_lines = ["#!/bin/bash", "set -e", "# Submit all EBSC jobs in order"]
     idx = 1
     for placement in PLACEMENTS:  # placement major order
         for n in N_LIST:  # n ascending
             a_fracs = A_FRACS_BY_N[n]
             for a in a_fracs:  # a_frac as specified order
                 for sigma in SIGMAS:  # sigma ascending
-                    code = f"EB{idx:03d}"
+                    code = f"EBSC{idx:03d}"
                     path = os.path.join(THIS_DIR, f"{code}.sh")
                     with open(path, "w", newline="\n") as f:
                         f.write(script_content(code, placement, n, a, sigma))
@@ -65,7 +65,7 @@ def main():
                     idx += 1
 
     # Generate mapping table
-    table_path = os.path.join(THIS_DIR, "EB_table.md")
+    table_path = os.path.join(THIS_DIR, "EBSC_table.md")
     with open(table_path, "w", newline="\n") as f:
         f.write("| Code | Placement | n | a_frac | sigma | Val Acc@1 | Val Acc@5 |\n")
         f.write("|------|-----------|---|--------|-------|-----------|-----------|\n")
@@ -75,12 +75,12 @@ def main():
                 a_fracs = A_FRACS_BY_N[n]
                 for a in a_fracs:  # a_frac as specified order
                     for sigma in SIGMAS:  # sigma ascending
-                        code = f"EB{idx:03d}"
+                        code = f"EBSC{idx:03d}"
                         f.write(f"| {code} | {placement} | {n} | {a:.2f} | {sigma} | ? | ? |\n")
                         idx += 1
 
     # Write submit-all helper
-    submit_path = os.path.join(THIS_DIR, "EB_submit_all.sh")
+    submit_path = os.path.join(THIS_DIR, "EBSC_submit_all.sh")
     with open(submit_path, "w", newline="\n") as f:
         f.write("\n".join(submit_lines) + "\n")
     try:
