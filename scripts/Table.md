@@ -45,15 +45,15 @@
 |J038 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.08 --pkb-sigma 0.5 --pkb-views 8 --pkb-placement random | 0.914 | ? |
 |J039 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.12 --pkb-sigma 0.9 --pkb-views 8 --pkb-placement random | 0.917 | ? |
 |J040 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.05 --pkb-sigma 0.3 --pkb-views 8 --pkb-placement random | 0.913 | 0.983 |
-|J041 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.04 --pkb-sigma 0.8 --pkb-views 8 --pkb-placement dispersed | ? | ? |
-|J042 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 12 --pkb-a-frac 0.05 --pkb-sigma 0.5 --pkb-views 8 --pkb-placement contiguous | ? | ? |
-|J043 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.03 --pkb-sigma 0.9 --pkb-views 8 --pkb-placement random | ? | ? |
-|J044 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.07 --pkb-sigma 0.6 --pkb-views 8 --pkb-placement dispersed | ? | ? |
-|J045 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.05 --pkb-sigma 0.7 --pkb-views 8 --pkb-placement contiguous | ? | ? |
-|J046 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.025 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
-|J047 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.1 --pkb-sigma 0.4 --pkb-views 8 --pkb-placement random | ? | ? |
-|J048 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 15 --pkb-a-frac 0.045 --pkb-sigma 0.75 --pkb-views 8 --pkb-placement contiguous | ? | ? |
-|J049 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 12 --pkb-a-frac 0.06 --pkb-sigma 0.9 --pkb-views 8 --pkb-placement dispersed | ? | ? |
+|J041 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 16 --pkb-a-frac 0.04 --pkb-sigma 0.8 --pkb-views 8 --pkb-placement dispersed | 0.917 | 0.984 |
+|J042 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 12 --pkb-a-frac 0.05 --pkb-sigma 0.5 --pkb-views 8 --pkb-placement contiguous | 0.915 | 0.985 |
+|J043 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.03 --pkb-sigma 0.9 --pkb-views 8 --pkb-placement random | 0.915 | 0.983 |
+|J044 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.07 --pkb-sigma 0.6 --pkb-views 8 --pkb-placement dispersed | 0.913 | 0.984 |
+|J045 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.05 --pkb-sigma 0.7 --pkb-views 8 --pkb-placement contiguous | 0.914 | 0.985 |
+|J046 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.025 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement dispersed | 0.914 | 0.985 |
+|J047 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.1 --pkb-sigma 0.4 --pkb-views 8 --pkb-placement random | 0.915 | 0.984 |
+|J048 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 15 --pkb-a-frac 0.045 --pkb-sigma 0.75 --pkb-views 8 --pkb-placement contiguous | 0.914 | 0.984 |
+|J049 | Stanford_Cars | Resnet50 | PKB | --hflip --rotate | --pkb-n 12 --pkb-a-frac 0.06 --pkb-sigma 0.9 --pkb-views 8 --pkb-placement dispersed | 0.916 | 0.984 |
 
 ## G: G-series - CUB-200 fine-grid search
 
