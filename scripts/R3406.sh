@@ -13,5 +13,5 @@ module load cuda/12.6.2
 source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
-# R3406: SoyAgeing-R1, resnet34.tv_in1k, PKB placement random, a-frac 0.25, sigma 2.0
-python3 train.py --dataset soy_ageing_r1 --model resnet34.tv_in1k --pretrained --augmentation pkb --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random --hflip --rotate --save-best >> R3406.log
+# R3406: SoyAgeing-R1, resnet34.a1_in1k, PKB placement random, a-frac 0.25, sigma 2.0
+python3 train.py --dataset soy_ageing_r1 --model resnet34.a1_in1k --pretrained --augmentation pkb --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random --hflip --rotate --save-best >> R3406.log
