@@ -25,7 +25,15 @@
 | Model | Method | Cotton80 | Soybean | SoyGene | SoyGlobal | SoyAgeing | CUB_200 | Stanford_Cars |
 |-------|--------|----------|---------|---------|-----------|-----------|---------|---------------|
 | Tiny_ViT | Original Augmentations | 0.675 | 0.4717 | 0.7850 | 0.478 | 0.792 | 0.896 | 0.945 |
-| Tiny_ViT | PKB + Original Augmentations | 0.700 | 0.657 | 0.838 | 0.682 | 0.8418 | 0.907 | ? |
+| Tiny_ViT | PKB + Original Augmentations | 0.700 | 0.657 | 0.838 | 0.682 | 0.8418 | 0.907 | 0.946 |
+
+## Ablation Study - R50 and R34
+
+| Model | Method | Cotton80 | Soybean | SoyGene | SoyGlobal | SoyAgeing | CUB_200 | Stanford_Cars |
+|-------|--------|----------|---------|---------|-----------|-----------|---------|---------------|
+| ResNet50 | Original Augmentations | 0.438 | ? | ? | ? | ? | ? | ? |
+| ResNet50 | PKB + Original Augmentations | 0.479 | ? | ? | ? | ? | ? | ? |
+| ResNet34 | PKB + Original Augmentations | 0.650 | 0.600 | 0.810 | 0.650 | 0.820 | 0.787 | 0.922 |
 
 ## Ablation Study - PKB and Null Baseline
 
