@@ -82,25 +82,25 @@
 |G21 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 13 --pkb-a-frac 0.28 --pkb-sigma 4.0 --pkb-views 5 --pkb-placement contiguous | 0.843 | 0.957 |
 |G22 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 14 --pkb-a-frac 0.28 --pkb-sigma 4.0 --pkb-views 5 --pkb-placement contiguous | 0.844 | 0.959 |
 |G23 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 15 --pkb-a-frac 0.28 --pkb-sigma 4.0 --pkb-views 5 --pkb-placement contiguous | 0.840 | 0.957 |
-|G24 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 19 --pkb-a-frac 0.09 --pkb-sigma 1.2 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+|G24 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 19 --pkb-a-frac 0.09 --pkb-sigma 1.2 --pkb-views 8 --pkb-placement contiguous | 0.854 | 0.961 |
 |G25 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 21 --pkb-a-frac 0.08 --pkb-sigma 1.0 --pkb-views 7 --pkb-placement contiguous | 0.852 | 0.962 |
-|G26 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.085 --pkb-sigma 1.1 --pkb-views 8 --pkb-placement contiguous | ? | ? |
-|G27 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.075 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+|G26 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.085 --pkb-sigma 1.1 --pkb-views 8 --pkb-placement contiguous | 0.855 | 0.961 |
+|G27 | CUB-200 | Resnet50 | PKB | --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.075 --pkb-sigma 1.0 --pkb-views 8 --pkb-placement contiguous | 0.855 | 0.961 |
 
 ## P: P-series - CUB-200 parameter search
 
 | Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
 |------|---------|-------|------------|--------|----------|-----------|-----------|
-| P01  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 19 --pkb-a-frac 0.085 --pkb-sigma 1.2 --pkb-views 8 --pkb-placement contiguous  | ? | ? |
-| P02  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.09 --pkb-sigma 1.15 --pkb-views 8 --pkb-placement contiguous  | ? | ? |
-| P03  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.085 --pkb-sigma 1.1 --pkb-views 8 --pkb-placement contiguous  | ? | ? |
-| P04  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.09 --pkb-sigma 1.2 --pkb-views 8 --pkb-placement contiguous   | ? | ? |
-| P05  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.085 --pkb-sigma 1.2 --pkb-views 8 --pkb-placement contiguous  | ? | ? |
-| P06  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 21 --pkb-a-frac 0.085 --pkb-sigma 1.15 --pkb-views 8 --pkb-placement contiguous | ? | ? |
-| P07  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 19 --pkb-a-frac 0.09 --pkb-sigma 1.1 --pkb-views 7 --pkb-placement contiguous   | ? | ? |
-| P08  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.085 --pkb-sigma 1.2 --pkb-views 7 --pkb-placement contiguous  | ? | ? |
-| P09  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.08 --pkb-sigma 1.2 --pkb-views 8 --pkb-placement contiguous   | ? | ? |
-| P10  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 19 --pkb-a-frac 0.085 --pkb-sigma 1.15 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+| P01  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 19 --pkb-a-frac 0.085 --pkb-sigma 1.2 --pkb-views 8 --pkb-placement contiguous  | 0.854 | 0.961 |
+| P02  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.09 --pkb-sigma 1.15 --pkb-views 8 --pkb-placement contiguous  | 0.857 | 0.962 |
+| P03  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.085 --pkb-sigma 1.1 --pkb-views 8 --pkb-placement contiguous  | 0.855 | 0.963 |
+| P04  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 17 --pkb-a-frac 0.09 --pkb-sigma 1.2 --pkb-views 8 --pkb-placement contiguous   | 0.853 | 0.962 |
+| P05  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.085 --pkb-sigma 1.2 --pkb-views 8 --pkb-placement contiguous  | 0.855 | 0.962 |
+| P06  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 21 --pkb-a-frac 0.085 --pkb-sigma 1.15 --pkb-views 8 --pkb-placement contiguous | 0.857 | 0.963 |
+| P07  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 19 --pkb-a-frac 0.09 --pkb-sigma 1.1 --pkb-views 7 --pkb-placement contiguous   | 0.854 | 0.963 |
+| P08  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 20 --pkb-a-frac 0.085 --pkb-sigma 1.2 --pkb-views 7 --pkb-placement contiguous  | 0.853 | 0.962 |
+| P09  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 18 --pkb-a-frac 0.08 --pkb-sigma 1.2 --pkb-views 8 --pkb-placement contiguous   | 0.856 | 0.963 |
+| P10  | CUB-200 | Resnet50 | PKB| --hflip --rotate | --pkb-n 19 --pkb-a-frac 0.085 --pkb-sigma 1.15 --pkb-views 8 --pkb-placement contiguous | 0.852 | 0.963 |
 
 ## A: Tiny ViT
 
@@ -295,3 +295,38 @@
 |TVG001 | SoyGlobal | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement random | 0.682 | 0.867 |
 |TVG002 | SoyGlobal | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement dispersed | 0.661 | 0.646 |
 |TVG003 | SoyGlobal | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 2.0 --pkb-views 10 --pkb-placement contiguous | 0.638 | 0.846 |
+
+## R34 - PKB on UFGVC {Cotton80, Soybean, SoyAgeing-R{1,3,4,5,6}, SoyGene, SoyGlobal}
+
+| Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+|R3400 | Cotton80 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.30 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|R3401 | Cotton80 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+|R3402 | Cotton80 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
+|R3403 | Soybean | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 3.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|R3404 | Soybean | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+|R3405 | Soybean | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
+|R3406 | SoyAgeing-R1 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|R3407 | SoyAgeing-R1 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+|R3408 | SoyAgeing-R1 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
+|R3409 | SoyAgeing-R3 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|R3410 | SoyAgeing-R3 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+|R3411 | SoyAgeing-R3 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
+|R3412 | SoyAgeing-R4 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|R3413 | SoyAgeing-R4 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+|R3414 | SoyAgeing-R4 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
+|R3415 | SoyAgeing-R5 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|R3416 | SoyAgeing-R5 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+|R3417 | SoyAgeing-R5 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
+|R3418 | SoyAgeing-R6 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|R3419 | SoyAgeing-R6 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+|R3420 | SoyAgeing-R6 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
+|R3421 | SoyGene | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|R3422 | SoyGene | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+|R3423 | SoyGene | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
+|R3424 | SoyGlobal | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|R3425 | SoyGlobal | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+|R3426 | SoyGlobal | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
+|R3427 | Stanford_Cars | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|R3428 | Stanford_Cars | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+|R3429 | Stanford_Cars | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
