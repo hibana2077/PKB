@@ -16,4 +16,4 @@ source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 cd ../..
 
 # Single run generated from grid (no --color-jitter)
-python3 train.py --dataset cub_200_2011 --model efficientnet_b0.ra4_e3600_r224_in1k --pretrained --augmentation pkb --hflip --rotate --pkb-n 6 --pkb-a-frac 0.12 --pkb-sigma 6.5 --pkb-views 10 --pkb-placement dispersed >> EBC060.log 2>&1
+python3 train.py --dataset cub_200_2011 --model efficientnet_b0.ra4_e3600_r224_in1k --pretrained --augmentation pkb --hflip --rotate --pkb-n 6 --pkb-a-frac 0.12 --pkb-sigma 6.5 --pkb-views 8 --pkb-placement dispersed >> EBC060.log 2>&1

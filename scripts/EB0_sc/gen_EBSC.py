@@ -4,7 +4,7 @@ import os
 DATASET = "stanford_cars"
 MODEL = "efficientnet_b0.ra4_e3600_r224_in1k"
 PLACEMENTS = ["random", "dispersed", "contiguous"]  # order required
-VIEWS = 10
+VIEWS = 8
 SIGMAS = [2.0, 4.0, 5.0, 6.5]
 N_LIST = [6, 7, 8, 10]
 
