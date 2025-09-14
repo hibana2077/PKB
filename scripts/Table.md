@@ -337,9 +337,9 @@
 |R3419 | SoyAgeing-R6 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | 0.565 | 0.843 |
 |R3420 | SoyAgeing-R6 | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | 0.584 | 0.829 |
 |R3421 | SoyGene | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.530 | 0.804 |
-|R3422 | SoyGene | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
-|R3423 | SoyGene | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
-|R3424 | SoyGlobal | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|R3422 | SoyGene | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | 0.439 | 0.729 |
+|R3423 | SoyGene | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | 0.563 | 0.829 |
+|R3424 | SoyGlobal | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.380 | 0.624 |
 |R3425 | SoyGlobal | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
 |R3426 | SoyGlobal | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
 |R3427 | Stanford_Cars | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.913 | 0.983 |
