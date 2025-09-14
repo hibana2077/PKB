@@ -80,6 +80,11 @@ class UFGVCDataset(Dataset):
             'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/stanford_cars_dataset.parquet?download=true',
             'filename': 'stanford_cars_dataset.parquet',
             'description': 'Stanford Cars dataset for fine-grained car classification'
+        },
+        'nabirds': {
+            'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/nabirds_dataset.parquet?download=true',
+            'filename': 'nabirds_dataset.parquet',
+            'description': 'NABirds dataset for fine-grained bird classification'
         }
     }
     
