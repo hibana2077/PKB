@@ -14,4 +14,4 @@ source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
 # R3433: NAbird, resnet34.tv_in1k, Base
-python3 train.py --dataset nabird --model resnet34.tv_in1k --pretrained --hflip --rotate --save-best >> R3433.log
+python3 train.py --dataset nabirds --model resnet34.tv_in1k --pretrained --hflip --rotate --save-best >> R3433.log

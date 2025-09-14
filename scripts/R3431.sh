@@ -14,4 +14,4 @@ source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
 # R3431: NAbird, resnet34.tv_in1k, PKB placement contiguous, a-frac 0.25, sigma 2.0
-python3 train.py --dataset nabird --model resnet34.tv_in1k --pretrained --augmentation pkb --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous --hflip --rotate --save-best >> R3431.log
+python3 train.py --dataset nabirds --model resnet34.tv_in1k --pretrained --augmentation pkb --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous --hflip --rotate --save-best >> R3431.log
