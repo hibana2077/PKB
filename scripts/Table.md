@@ -274,6 +274,8 @@
 | TVD007 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 4 --pkb-a-frac 0.25 --pkb-sigma 3.0 --pkb-views 2 --pkb-placement random | ? | ? |
 | TVD008 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 4 --pkb-a-frac 0.25 --pkb-sigma 4.0 --pkb-views 2 --pkb-placement dispersed | ? | ? |
 | TVD009 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 4 --pkb-a-frac 0.25 --pkb-sigma 5.0 --pkb-views 2 --pkb-placement contiguous | ? | ? |
+| TVD010 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 4 --pkb-a-frac 0.15 --pkb-sigma 5.0 --pkb-views 2 --pkb-placement contiguous | ? | ? |
+| TVD011 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 4 --pkb-a-frac 0.35 --pkb-sigma 5.0 --pkb-views 2 --pkb-placement contiguous | ? | ? |
 
 ## TVE: Tiny ViT Parameter Experiments E - SoyGene
 
@@ -343,6 +345,10 @@
 |R3427 | Stanford_Cars | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.913 | 0.983 |
 |R3428 | Stanford_Cars | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | 0.915 | 0.984 |
 |R3429 | Stanford_Cars | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | 0.912 | 0.985 |
+|R3430 | NAbird | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|R3431 | NAbird | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+|R3432 | NAbird | resnet34.tv_in1k | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
+|R3433 | NAbird | resnet34.tv_in1k | Base | --hflip --rotate | None | ? | ? |
 
 ## R50 - PKB on UFGVC {Cotton80, Soybean, SoyAgeing-R{1,3,4,5,6}, SoyGene, SoyGlobal}
 
@@ -371,3 +377,7 @@
 |R5024 | SoyGlobal | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
 |R5025 | SoyGlobal | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
 |R5026 | SoyGlobal | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
+|R5027 | NAbird | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
+|R5028 | NAbird | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
+|R5029 | NAbird | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
+|R5030 | NAbird | resnet50 | Base | --hflip --rotate | None | ? | ? |
