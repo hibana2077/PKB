@@ -13,5 +13,5 @@ module load cuda/12.6.2
 source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
-# R3433: NAbird, resnet34.tv_in1k, Base
-python3 train.py --dataset nabirds --model resnet34.tv_in1k --pretrained --hflip --rotate --save-best >> R3433.log
+# R3433: NAbird, resnet34.a1_in1k, Base
+python3 train.py --dataset nabirds --model resnet34.a1_in1k --pretrained --hflip --rotate --save-best >> R3433.log
