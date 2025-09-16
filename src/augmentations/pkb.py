@@ -1,5 +1,5 @@
 import random
-from typing import Optional, Tuple, List, Iterable, Set
+from typing import Optional, Tuple, List, Iterable, Set, Callable
 from PIL import Image, ImageFilter, ImageDraw
 import torch
 
@@ -9,7 +9,8 @@ class PatchKeepBlur:
     """
     def __init__(self, n: int = 4, a: Optional[int] = None, a_fraction: Optional[float] = 0.25,
                  sigma: float = 2.0, placement: str = 'random', seed: Optional[int] = None,
-                 highlight: bool = False, highlight_color: str = 'E30918'):
+                 highlight: bool = False, highlight_color: str = 'E30918',
+                 patch_op: Optional[Callable[[Image.Image], Image.Image]] = None):
         assert n > 1, 'n must be > 1'
         self.n = n
         total = n * n
@@ -25,6 +26,8 @@ class PatchKeepBlur:
         self.base_rng = random.Random(seed)
         self.highlight = highlight
         self.highlight_color = self._hex_to_rgb(highlight_color) if highlight else None
+        # Optional per-patch operation; if None, defaults to Gaussian blur with provided sigma
+        self.patch_op = patch_op
 
     def __call__(self, img: Image.Image) -> Image.Image:
         if self.a == 0:
@@ -43,7 +46,12 @@ class PatchKeepBlur:
         w, h = img.size
         pw = w // self.n
         ph = h // self.n
-        blur_filter = ImageFilter.GaussianBlur(self.sigma)
+        # Decide which per-patch op to use
+        if self.patch_op is not None:
+            op = self.patch_op
+        else:
+            blur_filter = ImageFilter.GaussianBlur(self.sigma)
+            op = lambda im: im.filter(blur_filter)
         draw = ImageDraw.Draw(out) if self.highlight else None
         for idx in indices:
             r, c = divmod(idx, self.n)
@@ -52,7 +60,7 @@ class PatchKeepBlur:
             right = (c + 1) * pw if c < self.n - 1 else w
             lower = (r + 1) * ph if r < self.n - 1 else h
             patch = out.crop((left, upper, right, lower))
-            patch = patch.filter(blur_filter)
+            patch = op(patch)
             out.paste(patch, (left, upper))
             if draw is not None:
                 # draw rectangle inside image bounds
@@ -187,12 +195,22 @@ class MultiViewPatchKeepBlur:
     def __init__(self, n: int = 4, a: Optional[int] = None, a_fraction: Optional[float] = 0.25,
                  sigma: float = 2.0, placement: str = 'random', views: int = 2,
                  seed: Optional[int] = None, post_transform=None, max_resample_factor: int = 20,
-                 highlight: bool = False, highlight_color: str = 'E30918'):
+                 highlight: bool = False, highlight_color: str = 'E30918',
+                 patch_op: Optional[Callable[[Image.Image], Image.Image]] = None):
         assert views > 1, 'Use PatchKeepBlur for single view'
         self.views = views
         self.post_transform = post_transform
-        self.pkb = PatchKeepBlur(n=n, a=a, a_fraction=a_fraction, sigma=sigma, placement=placement, seed=seed,
-                                 highlight=highlight, highlight_color=highlight_color)
+        self.pkb = PatchKeepBlur(
+            n=n,
+            a=a,
+            a_fraction=a_fraction,
+            sigma=sigma,
+            placement=placement,
+            seed=seed,
+            highlight=highlight,
+            highlight_color=highlight_color,
+            patch_op=patch_op,
+        )
         self.max_attempts = max_resample_factor * views
 
     def __call__(self, img: Image.Image):
@@ -222,3 +240,21 @@ class MultiViewPatchKeepBlur:
         return collected
 
 __all__ = ['PatchKeepBlur', 'PatchCutout', 'FullImageBlur', 'MultiViewPatchKeepBlur']
+
+# 'gaussian', 'median', 'sharpen', 'solarize', 'jpeg', 'noise', 'colorjitter'
+# from PIL import ImageFilter
+# from src.augmentations.pkb import PatchKeepBlur, MultiViewPatchKeepBlur
+
+# def sharpen(pil):
+#     return pil.filter(ImageFilter.UnsharpMask(radius=2, percent=150, threshold=3))
+
+# pkb = PatchKeepBlur(n=4, a_fraction=0.25, placement='random', patch_op=sharpen)
+# # 或多視角
+# mv_pkb = MultiViewPatchKeepBlur(n=4, views=2, patch_op=sharpen, post_transform=to_tensor)
+
+# from PIL import ImageFilter
+
+# def median3(pil):
+#     return pil.filter(ImageFilter.MedianFilter(size=3))
+
+# pkb = PatchKeepBlur(n=4, a_fraction=0.25, patch_op=median3)

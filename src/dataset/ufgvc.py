@@ -85,6 +85,11 @@ class UFGVCDataset(Dataset):
             'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/nabirds_dataset.parquet?download=true',
             'filename': 'nabirds_dataset.parquet',
             'description': 'NABirds dataset for fine-grained bird classification'
+        },
+        'fgvc_aircraft': {
+            'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/fgvcaircraft_variant.parquet?download=true',
+            'filename': 'fgvcaircraft_variant.parquet',
+            'description': 'FGVC Aircraft dataset for fine-grained aircraft classification'
         }
     }
     
