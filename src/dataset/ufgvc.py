@@ -90,6 +90,11 @@ class UFGVCDataset(Dataset):
             'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/fgvcaircraft_variant.parquet?download=true',
             'filename': 'fgvcaircraft_variant.parquet',
             'description': 'FGVC Aircraft dataset for fine-grained aircraft classification'
+        },
+        'food101': {
+            'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/food101_subset.parquet?download=true',
+            'filename': 'food101_subset.parquet',
+            'description': 'Food-101 dataset for food classification'
         }
     }
     
