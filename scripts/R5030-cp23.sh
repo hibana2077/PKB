@@ -10,7 +10,7 @@
 
 module load cuda/12.6.2
 
-source /scratch/rp06/sl5952/PKB/.venv/bin/activate
+source /scratch/cp23/lw4988/PKB/.venv/bin/activate
 
 cd ..
 # R5030: NAbird, resnet50, Base augmentation (no PKB)
