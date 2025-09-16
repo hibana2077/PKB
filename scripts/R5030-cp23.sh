@@ -6,7 +6,7 @@
 #PBS -l mem=60GB           
 #PBS -l walltime=25:30:00  
 #PBS -l wd                  
-#PBS -l storage=scratch/rp06
+#PBS -l storage=scratch/cp23
 
 module load cuda/12.6.2
 
