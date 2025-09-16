@@ -66,18 +66,25 @@ def build_val_transform(resize_side: int, crop: int):
     ])
 
 
-def load_model(args, num_classes: int):
-    if args.model == 'resnet50':
+def load_model_with_params(model_name: str, checkpoint: str, train_crop: int, num_classes: int):
+    """Create and load a timm model by name and checkpoint path.
+    Falls back to generic timm.create_model if model_name not in special cases.
+    """
+    if model_name == 'resnet50':
         model = timm.create_model('resnet50', pretrained=False, num_classes=num_classes)
-    elif args.model == 'vit':
-        model = timm.create_model('vit_small_patch16_384', pretrained=False, img_size=args.train_crop, num_classes=num_classes)
+    elif model_name in {'vit', 'vit_small_patch16_384'}:
+        model = timm.create_model('vit_small_patch16_384', pretrained=False, img_size=train_crop, num_classes=num_classes)
     else:
-        model = timm.create_model(args.model, pretrained=False, num_classes=num_classes)
-    ckpt = torch.load(args.checkpoint, map_location='cpu')
+        model = timm.create_model(model_name, pretrained=False, num_classes=num_classes)
+    ckpt = torch.load(checkpoint, map_location='cpu')
     state_dict = ckpt.get('model', ckpt)
     model.load_state_dict(state_dict, strict=False)
     model.eval()
     return model
+
+
+def load_model(args, num_classes: int):
+    return load_model_with_params(args.model, args.checkpoint, args.train_crop, num_classes)
 
 
 def collect_indices_by_class(labels: List[int], k: int) -> List[int]:
@@ -434,16 +441,27 @@ def auto_select_conv_layer(model: nn.Module) -> nn.Module:
     return last
 
 
-def run_gradcam(args, model: nn.Module, device: torch.device, dataset: UFGVCDataset, out_dir: Path):
+def run_gradcam(
+    args,
+    model: nn.Module,
+    device: torch.device,
+    dataset: UFGVCDataset,
+    out_dir: Path,
+    indices: Optional[List[int]] = None,
+) -> int:
     if args.gradcam_samples <= 0:
-        return
+        return 0
     if hasattr(model, 'module'):
         model_core = model.module
     else:
         model_core = model
     layer = auto_select_conv_layer(model_core) if args.gradcam_layer == 'auto' else eval(f'model_core.{args.gradcam_layer}')
     cam_engine = GradCAM(model_core, layer)
-    loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=args.num_workers)
+    if indices is not None:
+        subset = torch.utils.data.Subset(dataset, indices)
+        loader = DataLoader(subset, batch_size=1, shuffle=False, num_workers=args.num_workers)
+    else:
+        loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=args.num_workers)
     ensure_dir(out_dir)
     orig_dir = out_dir / 'original'
     if getattr(args, 'orig_pic', False):
@@ -475,18 +493,27 @@ def run_gradcam(args, model: nn.Module, device: torch.device, dataset: UFGVCData
             plt.savefig(out_path, dpi=200)
             plt.close()
         saved += 1
-        if saved >= args.gradcam_samples:
+        # If indices provided, iterate through all; otherwise respect --gradcam-samples
+        if indices is None and saved >= args.gradcam_samples:
             break
     cam_engine.remove()
+    return saved
 
 
 @torch.no_grad()
-def run_vit_attention(args, model: nn.Module, device: torch.device, dataset: UFGVCDataset, out_dir: Path):
+def run_vit_attention(
+    args,
+    model: nn.Module,
+    device: torch.device,
+    dataset: UFGVCDataset,
+    out_dir: Path,
+    indices: Optional[List[int]] = None,
+) -> int:
     """Generate attention rollout heatmaps for ViT-like models.
     Saves overlays analogous to Grad-CAM using attention rollout from CLS token.
     """
     if args.vit_attn_samples <= 0:
-        return
+        return 0
     # Support both timm ViT (has `blocks`) and TinyViT (has `stages` with TinyVitBlock).
     if hasattr(model, 'module'):
         model_core = model.module
@@ -504,7 +531,11 @@ def run_vit_attention(args, model: nn.Module, device: torch.device, dataset: UFG
     orig_dir = out_dir / 'original'
     if getattr(args, 'orig_pic', False):
         ensure_dir(orig_dir)
-    loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=args.num_workers)
+    if indices is not None:
+        subset = torch.utils.data.Subset(dataset, indices)
+        loader = DataLoader(subset, batch_size=1, shuffle=False, num_workers=args.num_workers)
+    else:
+        loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=args.num_workers)
     saved = 0
 
     # Case A: Standard ViT with global attention and cls token
@@ -562,7 +593,7 @@ def run_vit_attention(args, model: nn.Module, device: torch.device, dataset: UFG
                 plt.savefig(out_path, dpi=200)
                 plt.close()
             saved += 1
-            if saved >= args.vit_attn_samples:
+            if indices is None and saved >= args.vit_attn_samples:
                 break
 
     # Case B: TinyViT style with window attention under `stages`
@@ -687,12 +718,13 @@ def run_vit_attention(args, model: nn.Module, device: torch.device, dataset: UFG
                 plt.savefig(out_path, dpi=200)
                 plt.close()
             saved += 1
-            if saved >= args.vit_attn_samples:
+            if indices is None and saved >= args.vit_attn_samples:
                 break
 
         h1.remove(); h2.remove()
     else:
         print('Model is not a ViT/TinyViT style (no blocks or stages); skipping vit attention.')
+    return saved
 
 
 def vit_overlay(image: torch.Tensor, heatmap: np.ndarray) -> np.ndarray:
@@ -715,13 +747,18 @@ def parse_args():
     p = argparse.ArgumentParser()
     # model/data
     p.add_argument('--checkpoint', required=True)
+    p.add_argument('--checkpoint-base', default=None, help='Base model checkpoint (for two-model compare)')
+    p.add_argument('--checkpoint-pkb', default=None, help='PKB model checkpoint (for two-model compare)')
     p.add_argument('--dataset', default='cotton80')
     p.add_argument('--data-root', default='./data')
     p.add_argument('--model', default='resnet50')
+    p.add_argument('--model-base', default=None, help='Base model name (defaults to --model)')
+    p.add_argument('--model-pkb', default=None, help='PKB model name (defaults to --model)')
     p.add_argument('--resize-side', type=int, default=440)
     p.add_argument('--train-crop', type=int, default=384)
     p.add_argument('--split', default='test')
     p.add_argument('--first-n-classes', type=int, default=-1, help='Use only the first N classes (dataset.classes order). -1=all')
+    p.add_argument('--compare-two-models', action='store_true', help='Compare Base vs PKB: visualize indices where PKB correct, Base wrong')
     # feature extraction
     p.add_argument('--feature-layer', choices=['features', 'head_input'], default='features')
     p.add_argument('--max-samples', type=int, default=-1, help='Max total samples (after class sampling). -1=all')
@@ -750,6 +787,27 @@ def parse_args():
     p.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')
     p.add_argument('--out-dir', default='./outputs/vis')
     return p.parse_args()
+
+
+@torch.no_grad()
+def get_predictions(model: nn.Module, dataset: UFGVCDataset, indices: List[int], device: torch.device, batch_size: int) -> Tuple[np.ndarray, np.ndarray]:
+    """Run inference on a subset of dataset indices and return (preds, labels)."""
+    subset = torch.utils.data.Subset(dataset, indices)
+    loader = DataLoader(subset, batch_size=batch_size, shuffle=False, num_workers=0)
+    preds_list: List[torch.Tensor] = []
+    labels_list: List[torch.Tensor] = []
+    model = model.to(device)
+    model.eval()
+    for images, targets in loader:
+        images = images.to(device)
+        logits = model(images)
+        preds = logits.argmax(dim=1).cpu()
+        # targets may be tensor already
+        if not torch.is_tensor(targets):
+            targets = torch.tensor(targets)
+        labels_list.append(targets.cpu())
+        preds_list.append(preds)
+    return torch.cat(preds_list).numpy(), torch.cat(labels_list).numpy()
 
 
 def main():
@@ -844,13 +902,44 @@ def main():
                 for r in reps:
                     f.write(str(int(r)) + '\n')
 
-    # Grad-CAM (works best for CNNs). Use original full dataset subset if earlier subset applied.
-    if args.do_gradcam:
-        gradcam_dir = Path(args.out_dir) / 'gradcam'
-        run_gradcam(args, model, device, dataset, gradcam_dir)
-    if args.do_vit_attn:
-        vit_dir = Path(args.out_dir) / 'vit_attn'
-        run_vit_attention(args, model, device, dataset, vit_dir)
+    # Two-model comparison: find samples PKB correct and Base wrong; then visualize those only
+    if args.compare_two_models:
+        # Validate inputs
+        if not args.checkpoint_base or not args.checkpoint_pkb:
+            raise ValueError('When --compare-two-models is set, please provide --checkpoint-base and --checkpoint-pkb')
+        model_base_name = args.model_base if args.model_base is not None else args.model
+        model_pkb_name = args.model_pkb if args.model_pkb is not None else args.model
+        model_base = load_model_with_params(model_base_name, args.checkpoint_base, args.train_crop, num_classes).to(device)
+        model_pkb = load_model_with_params(model_pkb_name, args.checkpoint_pkb, args.train_crop, num_classes).to(device)
+
+        # Evaluate on the same candidate pool (base_indices)
+        eval_indices = base_indices
+        preds_base, labels_eval = get_predictions(model_base, dataset, eval_indices, device, args.batch_size)
+        preds_pkb, _ = get_predictions(model_pkb, dataset, eval_indices, device, args.batch_size)
+        correct_pkb = preds_pkb == labels_eval
+        wrong_base = preds_base != labels_eval
+        chosen_mask = np.logical_and(correct_pkb, wrong_base)
+        chosen_indices = [eval_indices[i] for i, flag in enumerate(chosen_mask) if flag]
+
+        out_root = Path(args.out_dir) / 'compare'
+        base_out = out_root / 'base'
+        pkb_out = out_root / 'pkb'
+        # Grad-CAM
+        if args.do_gradcam:
+            run_gradcam(args, model_base, device, dataset, base_out / 'gradcam', indices=chosen_indices)
+            run_gradcam(args, model_pkb, device, dataset, pkb_out / 'gradcam', indices=chosen_indices)
+        # ViT attention
+        if args.do_vit_attn:
+            run_vit_attention(args, model_base, device, dataset, base_out / 'vit_attn', indices=chosen_indices)
+            run_vit_attention(args, model_pkb, device, dataset, pkb_out / 'vit_attn', indices=chosen_indices)
+    else:
+        # Grad-CAM (works best for CNNs). Use original full dataset subset if earlier subset applied.
+        if args.do_gradcam:
+            gradcam_dir = Path(args.out_dir) / 'gradcam'
+            run_gradcam(args, model, device, dataset, gradcam_dir)
+        if args.do_vit_attn:
+            vit_dir = Path(args.out_dir) / 'vit_attn'
+            run_vit_attention(args, model, device, dataset, vit_dir)
 
     print('Visualization tasks complete.')
 

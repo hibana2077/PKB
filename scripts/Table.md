@@ -384,6 +384,7 @@
 |R5028 | NAbird | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
 |R5029 | NAbird | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
 |R5030 | NAbird | resnet50 | Base | --hflip --rotate | None | ? | ? |
+|R5030-cp23 | NAbird | resnet50 | Base | --hflip --rotate | None | ? | ? |
 
 ## Ablation Study - blur and 
 - 改P
