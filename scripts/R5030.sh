@@ -14,4 +14,4 @@ source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
 # R5030: NAbird, resnet50, Base augmentation (no PKB)
-python3 train.py --dataset nabird --model resnet50 --pretrained --hflip --rotate --save-best >> R5030.log
+python3 train.py --dataset nabirds --model resnet50 --pretrained --hflip --rotate --save-best >> R5030.log

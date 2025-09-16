@@ -32,6 +32,31 @@ THEME_BLACK = '#000000'
 THEME_WHITE = '#FFFFFF'
 
 
+def _tensor_to_uint8_image(image: torch.Tensor) -> np.ndarray:
+    """Convert a normalized CHW tensor (ImageNet mean/std) to HWC uint8 RGB."""
+    mean = torch.tensor([0.485, 0.456, 0.406], device=image.device).view(3, 1, 1)
+    std = torch.tensor([0.229, 0.224, 0.225], device=image.device).view(3, 1, 1)
+    img = (image * std + mean).clamp(0, 1).detach().cpu().permute(1, 2, 0).numpy()
+    return (img * 255).astype(np.uint8)
+
+
+def _save_uint8_image(out_path: Path, array: np.ndarray):
+    """Save HWC uint8 RGB image to disk with best-effort backends."""
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        # Prefer imageio if available
+        from imageio import imwrite  # type: ignore
+        imwrite(out_path, array)
+    except Exception:
+        # Fallback to matplotlib
+        plt.figure(figsize=(4, 4))
+        plt.imshow(array)
+        plt.axis('off')
+        plt.tight_layout()
+        plt.savefig(out_path, dpi=200)
+        plt.close()
+
+
 def build_val_transform(resize_side: int, crop: int):
     return transforms.Compose([
         transforms.Resize((resize_side, resize_side)),
@@ -420,6 +445,9 @@ def run_gradcam(args, model: nn.Module, device: torch.device, dataset: UFGVCData
     cam_engine = GradCAM(model_core, layer)
     loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=args.num_workers)
     ensure_dir(out_dir)
+    orig_dir = out_dir / 'original'
+    if getattr(args, 'orig_pic', False):
+        ensure_dir(orig_dir)
     saved = 0
     for img, label in loader:
         img = img.to(device)
@@ -431,6 +459,11 @@ def run_gradcam(args, model: nn.Module, device: torch.device, dataset: UFGVCData
         except Exception:
             label_int = -1
         out_path = out_dir / f'gradcam_{saved:03d}_class{label_int}.png'
+        # Save original image if requested
+        if getattr(args, 'orig_pic', False):
+            orig_img = _tensor_to_uint8_image(img[0])
+            orig_path = orig_dir / f'gradcam_{saved:03d}_class{label_int}.png'
+            _save_uint8_image(orig_path, orig_img)
         from imageio import imwrite  # lightweight dependency via imageio (not in req) -> fallback to plt
         try:
             imwrite(out_path, overlay)
@@ -468,6 +501,9 @@ def run_vit_attention(args, model: nn.Module, device: torch.device, dataset: UFG
         return _hook
 
     ensure_dir(out_dir)
+    orig_dir = out_dir / 'original'
+    if getattr(args, 'orig_pic', False):
+        ensure_dir(orig_dir)
     loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=args.num_workers)
     saved = 0
 
@@ -511,6 +547,10 @@ def run_vit_attention(args, model: nn.Module, device: torch.device, dataset: UFG
             except Exception:
                 label_int = -1
             out_path = out_dir / f'vit_attn_{saved:03d}_class{label_int}.png'
+            if getattr(args, 'orig_pic', False):
+                orig_img = _tensor_to_uint8_image(img[0])
+                orig_path = orig_dir / f'vit_attn_{saved:03d}_class{label_int}.png'
+                _save_uint8_image(orig_path, orig_img)
             try:
                 from imageio import imwrite
                 imwrite(out_path, overlay)
@@ -632,6 +672,10 @@ def run_vit_attention(args, model: nn.Module, device: torch.device, dataset: UFG
             except Exception:
                 label_int = -1
             out_path = out_dir / f'vit_attn_{saved:03d}_class{label_int}.png'
+            if getattr(args, 'orig_pic', False):
+                orig_img = _tensor_to_uint8_image(img[0])
+                orig_path = orig_dir / f'vit_attn_{saved:03d}_class{label_int}.png'
+                _save_uint8_image(orig_path, orig_img)
             try:
                 from imageio import imwrite
                 imwrite(out_path, overlay)
@@ -698,6 +742,8 @@ def parse_args():
     # ViT attention maps
     p.add_argument('--do-vit-attn', action='store_true')
     p.add_argument('--vit-attn-samples', type=int, default=8)
+    # originals saving
+    p.add_argument('--orig-pic', action='store_true', help='Save original input images alongside overlays')
     # runtime
     p.add_argument('--batch-size', type=int, default=32)
     p.add_argument('--num-workers', type=int, default=4)

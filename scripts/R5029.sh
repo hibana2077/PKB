@@ -14,4 +14,4 @@ source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
 # R5029: NAbird, resnet50, PKB placement dispersed, a-frac 0.25, sigma 2.0
-python3 train.py --dataset nabird --model resnet50 --pretrained --augmentation pkb --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed --hflip --rotate --save-best >> R5029.log
+python3 train.py --dataset nabirds --model resnet50 --pretrained --augmentation pkb --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed --hflip --rotate --save-best >> R5029.log
