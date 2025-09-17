@@ -9,6 +9,7 @@
 #PBS -l storage=scratch/cp23
 
 module load cuda/12.6.2
+module load python/3.10.0
 
 source /scratch/cp23/lw4988/PKB/.venv/bin/activate
 
