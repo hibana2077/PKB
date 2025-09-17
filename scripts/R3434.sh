@@ -1,0 +1,17 @@
+#!/bin/bash
+#PBS -P cp23
+#PBS -q gpuvolta
+#PBS -l ngpus=1            
+#PBS -l ncpus=12            
+#PBS -l mem=40GB
+#PBS -l walltime=25:30:00  
+#PBS -l wd                  
+#PBS -l storage=scratch/cp23
+
+module load cuda/12.6.2
+
+source /scratch/cp23/lw4988/PKB/.venv/bin/activate
+
+cd ..
+# R3432: NAbird, resnet34.a1_in1k, PKB placement dispersed, a-frac 0.25, sigma 2.0
+python3 train.py --dataset nabirds --model resnet34.a1_in1k --pretrained --augmentation pkb --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed --hflip --rotate --save-best >> R3432.log
