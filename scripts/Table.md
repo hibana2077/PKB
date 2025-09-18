@@ -309,8 +309,8 @@
 | Code | Dataset | Model | Aug Method | Detail | PKB parm | Val Acc@1 | Val Acc@5 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 |TVH001 | NAbird | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 3.0 --pkb-views 10 --pkb-placement random | 0.898 | 0.987 |
-|TVH002 | NAbird | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 3.0 --pkb-views 10 --pkb-placement dispersed | ? | ? |
-|TVH003 | NAbird | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 3.0 --pkb-views 10 --pkb-placement contiguous | ? | ? |
+|TVH002 | NAbird | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 3.0 --pkb-views 10 --pkb-placement dispersed | 0.896 | 0.988 |
+|TVH003 | NAbird | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 3.0 --pkb-views 10 --pkb-placement contiguous | 0.898 | 0.988 |
 |TVH004 | NAbird | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 5.0 --pkb-views 10 --pkb-placement random | ? | ? |
 |TVH005 | NAbird | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 5.0 --pkb-views 10 --pkb-placement dispersed | ? | ? |
 |TVH006 | NAbird | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 5.0 --pkb-views 10 --pkb-placement contiguous | ? | ? |
@@ -380,10 +380,10 @@
 |R5024 | SoyGlobal | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.504 | 0.734 |
 |R5025 | SoyGlobal | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | 0.501 | 0.733 |
 |R5026 | SoyGlobal | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | 0.500 | 0.738 |
-|R5027 | NAbird | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | ? | ? |
-|R5028 | NAbird | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
-|R5029 | NAbird | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | ? | ? |
-|R5030 | NAbird | resnet50 | Base | --hflip --rotate | None | ? | ? |
+|R5027 | NAbird | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement random | 0.814 | ? |
+|R5028 | NAbird | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement contiguous | 0.812 | ? |
+|R5029 | NAbird | resnet50 | PKB | --hflip --rotate | --pkb-n 6 --pkb-a-frac 0.25 --pkb-sigma 2.0 --pkb-views 8 --pkb-placement dispersed | 0.810 | ? |
+|R5030 | NAbird | resnet50 | Base | --hflip --rotate | None | 0.828 | ? |
 |R5030-cp23 | NAbird | resnet50 | Base | --hflip --rotate | None | ? | ? |
 
 ## Ablation Study - blur and 

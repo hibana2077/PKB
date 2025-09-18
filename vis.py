@@ -746,7 +746,7 @@ def vit_overlay(image: torch.Tensor, heatmap: np.ndarray) -> np.ndarray:
 def parse_args():
     p = argparse.ArgumentParser()
     # model/data
-    p.add_argument('--checkpoint', required=True)
+    p.add_argument('--checkpoint', default=None, help='Single-model checkpoint (required unless --compare-two-models)')
     p.add_argument('--checkpoint-base', default=None, help='Base model checkpoint (for two-model compare)')
     p.add_argument('--checkpoint-pkb', default=None, help='PKB model checkpoint (for two-model compare)')
     p.add_argument('--dataset', default='cotton80')
@@ -820,7 +820,6 @@ def main():
     val_tf = build_val_transform(args.resize_side, args.train_crop)
     dataset = UFGVCDataset(dataset_name=args.dataset, root=args.data_root, split=args.split, transform=val_tf)
     num_classes = len(dataset.classes)
-    model = load_model(args, num_classes).to(device)
 
     # DataLoader (full then subselect indices if needed)
     base_indices = list(range(len(dataset)))
@@ -855,11 +854,14 @@ def main():
     subset = torch.utils.data.Subset(dataset, base_indices)
     loader = DataLoader(subset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
 
-    # Extract features once if any embedding or kmid requested
+    # Extract features once if any embedding or kmid requested (only for single-model mode)
     features = None
     labels = None
-    if any([args.do_tsne, args.do_umap, args.do_pca, args.do_kmid]):
-        features, labels = extract_features(model, loader, device, layer=args.feature_layer, max_samples=-1)
+    if not args.compare_two_models and any([args.do_tsne, args.do_umap, args.do_pca, args.do_kmid]):
+        if args.checkpoint is None:
+            raise ValueError('Embeddings requested: please provide --checkpoint for single-model mode (omit --compare-two-models).')
+        model_single = load_model(args, num_classes).to(device)
+        features, labels = extract_features(model_single, loader, device, layer=args.feature_layer, max_samples=-1)
         # optional PCA pre-processing (except pure PCA visualization which will be handled later)
         if args.pca_dim > 0 and (args.do_tsne or args.do_umap):
             features_pca = apply_pca(features, args.pca_dim)
@@ -934,12 +936,16 @@ def main():
             run_vit_attention(args, model_pkb, device, dataset, pkb_out / 'vit_attn', indices=chosen_indices)
     else:
         # Grad-CAM (works best for CNNs). Use original full dataset subset if earlier subset applied.
-        if args.do_gradcam:
-            gradcam_dir = Path(args.out_dir) / 'gradcam'
-            run_gradcam(args, model, device, dataset, gradcam_dir)
-        if args.do_vit_attn:
-            vit_dir = Path(args.out_dir) / 'vit_attn'
-            run_vit_attention(args, model, device, dataset, vit_dir)
+        if args.do_gradcam or args.do_vit_attn:
+            if args.checkpoint is None:
+                raise ValueError('Single-model attention requested: please provide --checkpoint (omit --compare-two-models).')
+            model_single = load_model(args, num_classes).to(device)
+            if args.do_gradcam:
+                gradcam_dir = Path(args.out_dir) / 'gradcam'
+                run_gradcam(args, model_single, device, dataset, gradcam_dir)
+            if args.do_vit_attn:
+                vit_dir = Path(args.out_dir) / 'vit_attn'
+                run_vit_attention(args, model_single, device, dataset, vit_dir)
 
     print('Visualization tasks complete.')
 
