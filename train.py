@@ -11,6 +11,7 @@ from torchvision import transforms
 import timm
 from src.dataset.ufgvc import UFGVCDataset
 from src.augmentations.pkb import PatchKeepBlur, PatchCutout, FullImageBlur, MultiViewPatchKeepBlur
+from src.augmentations.patch_ops import resolve_pkb_patch_op
 from src.utils.metrics import topk_accuracy, macro_f1, AverageMeter
 
 def build_transforms(args):
@@ -18,6 +19,7 @@ def build_transforms(args):
     train_crop = args.train_crop
     pad_resize = transforms.Resize((resize_side, resize_side))
     aug_list = [pad_resize]
+    patch_op_fn = resolve_pkb_patch_op(args.pkb_patch_op)
     if args.color_jitter:
         aug_list.append(transforms.ColorJitter(0.2,0.2,0.2,0.1))
     if args.hflip:
@@ -34,9 +36,14 @@ def build_transforms(args):
             ])
             aug_list.append(MultiViewPatchKeepBlur(n=args.pkb_n, a_fraction=args.pkb_a_frac, sigma=args.pkb_sigma,
                                                    placement=args.pkb_placement, views=args.pkb_views, seed=args.seed,
-                                                   post_transform=to_tensor_norm))
+                                                   post_transform=to_tensor_norm,
+                                                   highlight=args.pkb_highlight, highlight_color=args.pkb_highlight_color,
+                                                   patch_op=patch_op_fn))
         else:
-            aug_list.append(PatchKeepBlur(n=args.pkb_n, a_fraction=args.pkb_a_frac, sigma=args.pkb_sigma, placement=args.pkb_placement, seed=args.seed))
+            aug_list.append(PatchKeepBlur(n=args.pkb_n, a_fraction=args.pkb_a_frac, sigma=args.pkb_sigma,
+                                          placement=args.pkb_placement, seed=args.seed,
+                                          highlight=args.pkb_highlight, highlight_color=args.pkb_highlight_color,
+                                          patch_op=patch_op_fn))
     elif args.augmentation == 'cutout':
         aug_list.append(PatchCutout(n=args.pkb_n, a_fraction=args.pkb_a_frac, placement=args.pkb_placement, seed=args.seed))
     elif args.augmentation == 'fullblur':
@@ -146,6 +153,10 @@ def parse_args():
     p.add_argument('--pkb-sigma', type=float, default=2.0)
     p.add_argument('--pkb-placement', choices=['random','dispersed','contiguous'], default='random')
     p.add_argument('--pkb-views', type=int, default=1, help='Number of multi-view PKB variants per image (>=1)')
+    p.add_argument('--pkb-patch-op', choices=['blur','highpass','paper-noise','color-jitter'], default='blur',
+                   help='Per-patch operation used by PKB; blur uses Gaussian with --pkb-sigma')
+    p.add_argument('--pkb-highlight', action='store_true', help='Draw borders around processed patches for visualization')
+    p.add_argument('--pkb-highlight-color', type=str, default='E30918', help='Hex color for patch borders, e.g. FFCC00')
     p.add_argument('--seed', type=int, default=114514)
     p.add_argument('--num-workers', type=int, default=8)
     p.add_argument('--train-split', default='train')
