@@ -313,7 +313,7 @@
 |TVH003 | NAbird | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 3.0 --pkb-views 10 --pkb-placement contiguous | 0.898 | 0.988 |
 |TVH004 | NAbird | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 5.0 --pkb-views 10 --pkb-placement random | 0.898 | 0.986 |
 |TVH005 | NAbird | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 5.0 --pkb-views 10 --pkb-placement dispersed | 0.896 | 0.988 |
-|TVH006 | NAbird | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 8 --pkb-a-frac 0.20 --pkb-sigma 5.0 --pkb-views 10 --pkb-placement contiguous | ? | ? |
+|TVH006 | CUB-200 | tiny_vit_21m_384.dist_in22k_ft_in1k | PKB | --hflip --rotate | --pkb-n 10 --pkb-a-frac 0.15 --pkb-sigma 5.0 --pkb-views 8 --pkb-placement contiguous | ? | ? |
 
 ## R34 - PKB on UFGVC {Cotton80, Soybean, SoyAgeing-R{1,3,4,5,6}, SoyGene, SoyGlobal}
 
