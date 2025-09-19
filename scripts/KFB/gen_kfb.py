@@ -18,63 +18,75 @@ A_FRACS_BY_N = {
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
+def script_content(code: str, placement: str, n: int, a_frac: float, sigma: float) -> str:
+    # Log file matches code name in repo root
+    log_name = f"{code}.log"
+    return f"""#!/bin/bash
+#PBS -P cp23
+#PBS -q gpuvolta
+#PBS -l ngpus=1            
+#PBS -l ncpus=12            
+#PBS -l mem=20GB           
+#PBS -l walltime=24:30:00  
+#PBS -l wd                  
+#PBS -l storage=scratch/cp23
 
-def generate_run_all() -> str:
-    """Create a bash script that runs all configs and then parses logs to produce kfb_table.md."""
-    lines = ["#!/bin/bash", "set -e"]
-    idx = 1
-    for placement in PLACEMENTS:
-        for n in N_LIST:
-            a_fracs = A_FRACS_BY_N[n]
-            for a in a_fracs:
-                for sigma in SIGMAS:
-                    code = f"kfb{idx:03d}"
-                    log_file = f"{code}.log"
-                    cmd = (
-                        f"python3 ../../train.py --dataset {DATASET} --model {MODEL} --pretrained "
-                        f"--augmentation pkb --hflip --rotate --pkb-n {n} --pkb-a-frac {a:.2f} "
-                        f"--pkb-sigma {sigma} --pkb-views {VIEWS} --pkb-placement {placement} "
-                        f"> {log_file} 2>&1"
-                    )
-                    lines.append(f"echo 'Running {code} ({placement}, n={n}, a={a:.2f}, sigma={sigma})'")
-                    lines.append(cmd)
-                    idx += 1
-    # Add log parsing snippet at the end
-    lines.append("")
-    lines.append("echo 'Parsing logs for best Val Acc values...'")
-    lines.append("for f in kfb*.log; do")
-    lines.append("  echo -n \"$f: \";")
-    lines.append("  grep 'Val Loss' $f | sed -E 's/.*Val Loss [^|]* T1 ([0-9.]+).*/\\1 &/' | sort -nr | head -1")
-    lines.append("done")
-    return "\n".join(lines)
+module load cuda/12.6.2
+# module load python3/3.10.4
 
+source /scratch/cp23/lw4988/PKB/.venv/bin/activate
+
+cd ../..
+
+# Single run generated from grid (no --color-jitter)
+python3 train.py --dataset {DATASET} --model {MODEL} --pretrained --augmentation pkb --hflip --rotate --pkb-n {n} --pkb-a-frac {a_frac:.2f} --pkb-sigma {sigma} --pkb-views {VIEWS} --pkb-placement {placement} >> {log_name} 2>&1
+"""
 
 def main():
-    # Ensure output directory exists
+    # Generate kfbxxx scripts in deterministic order
     os.makedirs(THIS_DIR, exist_ok=True)
+    submit_lines = ["#!/bin/bash", "set -e", "# Submit all kfb jobs in order"]
+    idx = 1
+    for placement in PLACEMENTS:  # placement major order
+        for n in N_LIST:  # n ascending
+            a_fracs = A_FRACS_BY_N[n]
+            for a in a_fracs:  # a_frac as specified order
+                for sigma in SIGMAS:  # sigma ascending
+                    code = f"kfb{idx:03d}"
+                    path = os.path.join(THIS_DIR, f"{code}.sh")
+                    with open(path, "w", newline="\n") as f:
+                        f.write(script_content(code, placement, n, a, sigma))
+                    # ensure executable bit on posix systems
+                    try:
+                        os.chmod(path, 0o755)
+                    except Exception:
+                        pass
+                    submit_lines.append(f"qsub {code}.sh")
+                    idx += 1
 
-    run_all_path = os.path.join(THIS_DIR, "run_all.sh")
-    with open(run_all_path, "w", newline="\n") as f:
-        f.write(generate_run_all())
-    try:
-        os.chmod(run_all_path, 0o755)
-    except Exception:
-        pass
-
+    # Generate mapping table
     table_path = os.path.join(THIS_DIR, "kfb_table.md")
     with open(table_path, "w", newline="\n") as f:
         f.write("| Code | Placement | n | a_frac | sigma | Val Acc@1 | Val Acc@5 |\n")
         f.write("|------|-----------|---|--------|-------|-----------|-----------|\n")
         idx = 1
-        for placement in PLACEMENTS:
-            for n in N_LIST:
+        for placement in PLACEMENTS:  # placement major order
+            for n in N_LIST:  # n ascending
                 a_fracs = A_FRACS_BY_N[n]
-                for a in a_fracs:
-                    for sigma in SIGMAS:
+                for a in a_fracs:  # a_frac as specified order
+                    for sigma in SIGMAS:  # sigma ascending
                         code = f"kfb{idx:03d}"
                         f.write(f"| {code} | {placement} | {n} | {a:.2f} | {sigma} | ? | ? |\n")
                         idx += 1
 
+    # Write submit-all helper
+    submit_path = os.path.join(THIS_DIR, "kfb_submit_all.sh")
+    with open(submit_path, "w", newline="\n") as f:
+        f.write("\n".join(submit_lines) + "\n")
+    try:
+        os.chmod(submit_path, 0o755)
+    except Exception:
+        pass
 
 if __name__ == "__main__":
     main()
