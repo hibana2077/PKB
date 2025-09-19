@@ -27,7 +27,6 @@ run_one() {
   local code="$1" placement="$2" n="$3" a="$4" sigma="$5"
   codes+=("$code"); placements+=("$placement"); ns+=("$n"); afs+=("$a"); sigmas+=("$sigma")
   echo "=== Running $code: placement=$placement n=$n a_frac=$a sigma=$sigma ==="
-  # Tip: activate your environment here if needed, e.g. source .venv/bin/activate
   python3 ../../train.py \
     --dataset "$DATASET" --model "$MODEL" --pretrained \
     --augmentation pkb --hflip --rotate \
