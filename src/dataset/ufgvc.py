@@ -100,6 +100,11 @@ class UFGVCDataset(Dataset):
             'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/flowers102_subset.parquet?download=true',
             'filename': 'flowers102_subset.parquet',
             'description': 'Oxford Flowers 102 subset for flower classification'
+        },
+        'oxford_pets': {
+            'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/oxford_pets.parquet?download=true',
+            'filename': 'oxford_pets.parquet',
+            'description': 'Oxford-IIIT Pets subset for pet classification'
         }
     }
     
