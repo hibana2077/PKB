@@ -94,7 +94,12 @@ class UFGVCDataset(Dataset):
         'food101': {
             'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/food101_subset.parquet?download=true',
             'filename': 'food101_subset.parquet',
-            'description': 'Food-101 dataset for food classification'
+            'description': 'Food-101 subset for food classification'
+        },
+        'flowers102': {
+            'url': 'https://huggingface.co/datasets/hibana2077/CV-dataset-all-in-parquet/resolve/main/datasets/flowers102_subset.parquet?download=true',
+            'filename': 'flowers102_subset.parquet',
+            'description': 'Oxford Flowers 102 subset for flower classification'
         }
     }
     
