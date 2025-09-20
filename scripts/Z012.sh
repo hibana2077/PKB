@@ -13,7 +13,7 @@ module load cuda/12.6.2
 
 source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
-cd ../..
+cd ..
 
 # Single run generated from grid (no --color-jitter)
 python3 train.py --dataset stanford_cars --model mobilenetv4_hybrid_medium.ix_e550_r384_in1k --pretrained --augmentation pkb --hflip --rotate --pkb-n 6 --pkb-a-frac 0.11 --pkb-sigma 4.0 --pkb-views 8 --pkb-placement contiguous --pkb-patch-op color-jitter >> Z012.log
