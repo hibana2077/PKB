@@ -237,18 +237,22 @@ def plot_embedding(
     ax.tick_params(colors=THEME_BLACK, labelsize=16)
     for spine in ax.spines.values():
         spine.set_edgecolor(THEME_BLACK)
+    # Place legend outside the plot (right side) to avoid covering points
     ax.legend(
         fontsize=legend_fontsize,
         facecolor=THEME_WHITE,
         edgecolor=THEME_BLACK,
         framealpha=0.95,
-        loc='best',
+        loc='center left',
+        bbox_to_anchor=(1.02, 0.5),
+        borderaxespad=0.0,
         labelcolor=THEME_BLACK,
         markerscale=1.2,
     )
     ax.set_xticks([]); ax.set_yticks([])
+    # Tight layout plus tight bbox so the outside legend is included in the output
     plt.tight_layout()
-    plt.savefig(out_path, dpi=300, facecolor=plt.gcf().get_facecolor())
+    plt.savefig(out_path, dpi=300, bbox_inches='tight', facecolor=plt.gcf().get_facecolor())
     plt.close()
 
 
