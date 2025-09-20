@@ -14,4 +14,4 @@ module load cuda/12.6.2
 source /scratch/rp06/sl5952/PKB/.venv/bin/activate
 
 cd ..
-python3 train.py --dataset cotton80 --model mobilenetv4_hybrid_medium.ix_e550_r384_in1k --pretrained --hflip --rotate --save-best --augmentation pkb --pkb-n 10 --pkb-a-frac 0.28 --pkb-sigma 4.0 --pkb-views 8 --pkb-placement contiguous >> Z001.log
+python3 train.py --dataset cotton80 --model mobilenetv4_hybrid_medium.ix_e550_r384_in1k --pretrained --hflip --rotate --save-best --augmentation pkb --pkb-n 10 --pkb-a-frac 0.28 --pkb-sigma 4.0 --pkb-views 8 --pkb-placement contiguous --output ./outputs/z001 >> Z001.log
