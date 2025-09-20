@@ -34,7 +34,7 @@ def script_content(code: str, placement: str, n: int, a_frac: float, sigma: floa
 module load cuda/12.6.2
 # module load python3/3.10.4
 
-source /scratch/cp23/sl5952/PKB/.venv/bin/activate
+source /scratch/cp23/lw4988/PKB/.venv/bin/activate
 
 cd ../..
 
