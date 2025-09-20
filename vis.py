@@ -17,6 +17,8 @@ from matplotlib.colors import LinearSegmentedColormap
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+from sklearn.neighbors import NearestNeighbors
 
 try:
     import umap  # type: ignore
@@ -728,19 +730,137 @@ def run_vit_attention(
 
 
 def vit_overlay(image: torch.Tensor, heatmap: np.ndarray) -> np.ndarray:
-    """Overlay attention heatmap on original normalized image using theme colors.
-    Emphasize primary red; convert to uint8 array.
+    """Overlay attention heatmap on original normalized image using a standard colormap (jet).
+    Returns an HWC uint8 image.
     """
     mean = torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
     std = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
     img = (image.cpu() * std + mean).clamp(0, 1).permute(1, 2, 0).numpy()
-    # Create red heatmap: scale heatmap to 0..1 then map to (R,G,B)
     h = (heatmap - heatmap.min()) / (heatmap.max() - heatmap.min() + 1e-6)
-    red_map = np.stack([h, np.zeros_like(h), np.zeros_like(h)], axis=-1)
-    # Blend: where heat high, push towards red; else keep original
-    overlay = img * (1 - 0.6 * h[..., None]) + red_map * 0.6
+    cmap = plt.get_cmap('jet')
+    heat_rgb = cmap(h)[..., :3]  # [0,1]
+    overlay = 0.5 * img + 0.5 * heat_rgb
     overlay = np.clip(overlay, 0, 1)
     return (overlay * 255).astype(np.uint8)
+
+
+# ---- Embedding quality metrics and plots ----
+def _safe_silhouette(emb2d: np.ndarray, labels: np.ndarray) -> Optional[float]:
+    try:
+        # silhouette requires at least 2 clusters and fewer than n_samples clusters
+        if len(np.unique(labels)) < 2 or emb2d.shape[0] < 3:
+            return None
+        return float(silhouette_score(emb2d, labels, metric='euclidean'))
+    except Exception:
+        return None
+
+
+def _knn_overall_accuracy(emb2d: np.ndarray, labels: np.ndarray, k: int = 10) -> Optional[float]:
+    n = emb2d.shape[0]
+    if n < 2:
+        return None
+    k_eff = max(1, min(k, n - 1))
+    try:
+        nn = NearestNeighbors(n_neighbors=k_eff + 1, metric='euclidean')
+        nn.fit(emb2d)
+        dists, indices = nn.kneighbors(emb2d)  # includes self at [:,0]
+        neigh_idx = indices[:, 1:]  # drop self
+        neigh_labels = labels[neigh_idx]
+        # majority vote
+        from scipy import stats
+        mode_labels = stats.mode(neigh_labels, axis=1, keepdims=False).mode
+        acc = (mode_labels == labels).mean()
+        return float(acc)
+    except Exception:
+        # fallback simple L2, no scipy
+        try:
+            from collections import Counter
+            acc_cnt = 0
+            for i in range(n):
+                diff = emb2d - emb2d[i]
+                dist = (diff[:, 0]**2 + diff[:, 1]**2)
+                order = np.argsort(dist)
+                neigh = order[1:1 + k_eff]
+                counts = Counter(labels[neigh].tolist())
+                pred = max(counts.items(), key=lambda x: x[1])[0]
+                if pred == labels[i]:
+                    acc_cnt += 1
+            return acc_cnt / n
+        except Exception:
+            return None
+
+
+def _plot_knn_overall(acc: Optional[float], title: str, out_path: Path):
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.figure(figsize=(4, 4))
+    plt.bar([0], [acc if acc is not None else 0.0], color='#1f77b4')
+    plt.xticks([0], ['kNN@10'])
+    plt.ylim(0, 1)
+    plt.ylabel('Accuracy')
+    plt.title(title + ('' if acc is None else f' ({acc:.3f})'))
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=200)
+    plt.close()
+
+
+def _plot_knn_compare(acc_base: Optional[float], acc_pkb: Optional[float], title: str, out_path: Path):
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.figure(figsize=(5, 4))
+    vals = [acc_base if acc_base is not None else 0.0, acc_pkb if acc_pkb is not None else 0.0]
+    colors = ['#1f77b4', '#ff7f0e']
+    plt.bar([0, 1], vals, color=colors)
+    plt.xticks([0, 1], ['Base', 'PKB'])
+    plt.ylim(0, 1)
+    plt.ylabel('kNN@10 Accuracy')
+    sup = f" (base={vals[0]:.3f}, pkb={vals[1]:.3f})"
+    plt.title(title + sup)
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=200)
+    plt.close()
+
+
+def plot_embedding_compare(
+    emb: np.ndarray,
+    labels: np.ndarray,
+    model_flags: np.ndarray,
+    classes: List[str],
+    title: str,
+    out_path: Path,
+    marker_size: int = 18,
+):
+    """Plot combined embedding for two models.
+    model_flags: 0 for Base, 1 for PKB. Classes colored; models differ by marker.
+    """
+    plt.figure(figsize=(10, 10), facecolor=THEME_WHITE)
+    ax = plt.gca()
+    ax.set_facecolor(THEME_WHITE)
+    unique_classes = np.unique(labels)
+    base_cmap = plt.get_cmap('tab20')
+    class_colors = {c: base_cmap(i % base_cmap.N) for i, c in enumerate(unique_classes)}
+    markers = {0: 'o', 1: 's'}
+    for c in unique_classes:
+        idx_base = np.where((labels == c) & (model_flags == 0))[0]
+        idx_pkb = np.where((labels == c) & (model_flags == 1))[0]
+        if len(idx_base) > 0:
+            pts = emb[idx_base]
+            ax.scatter(pts[:, 0], pts[:, 1], s=marker_size, color=class_colors[c], marker=markers[0], alpha=0.85, label=None)
+        if len(idx_pkb) > 0:
+            pts = emb[idx_pkb]
+            ax.scatter(pts[:, 0], pts[:, 1], s=marker_size, color=class_colors[c], marker=markers[1], alpha=0.85, label=None)
+    # Legends
+    from matplotlib.lines import Line2D
+    class_handles = [Line2D([], [], linestyle='None', marker='o', color=class_colors[c], label=str(classes[c])) for c in unique_classes]
+    model_handles = [Line2D([], [], linestyle='None', marker=markers[m], color='k', label=('Base' if m == 0 else 'PKB')) for m in [0, 1]]
+    first_legend = ax.legend(handles=class_handles, title='Classes', fontsize=12, loc='upper right', framealpha=0.95)
+    ax.add_artist(first_legend)
+    ax.legend(handles=model_handles, title='Models', fontsize=12, loc='lower right', framealpha=0.95)
+    ax.set_title(title, color=THEME_BLACK, fontsize=26, pad=20, weight='bold')
+    ax.set_xticks([]); ax.set_yticks([])
+    for spine in ax.spines.values():
+        spine.set_edgecolor(THEME_BLACK)
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=300, facecolor=plt.gcf().get_facecolor())
+    plt.close()
 
 
 def parse_args():
@@ -878,10 +998,14 @@ def main():
         if args.do_tsne:
             emb = embed_tsne(features_pca, seed=args.seed)
             np.save(out_dir / 'tsne.npy', emb)
-            # Plot t-SNE with theme gradient color and class legend via marker shapes
-            plot_embedding_tsne_gradient_with_class_legend(
-                emb, labels, 't-SNE Embedding', out_dir / 'tsne.png', dataset.classes, legend_fontsize=22, marker_size=30
-            )
+            sil = _safe_silhouette(emb, labels)
+            title = 't-SNE Embedding' + ('' if sil is None else f' (sil={sil:.3f})')
+            plot_embedding(emb, labels, title, out_dir / 'tsne.png', dataset.classes)
+            # kNN metrics
+            knn_acc = _knn_overall_accuracy(emb, labels, k=10)
+            _plot_knn_overall(knn_acc, 't-SNE kNN accuracy', out_dir / 'tsne_knn.png')
+            with open(out_dir / 'tsne_metrics.json', 'w', encoding='utf-8') as f:
+                json.dump({'silhouette': sil, 'knn_acc@10': knn_acc}, f, indent=2)
         # UMAP
         if args.do_umap:
             if umap is None:
@@ -889,12 +1013,24 @@ def main():
             else:
                 emb = embed_umap(features_pca, seed=args.seed)
                 np.save(out_dir / 'umap.npy', emb)
-                plot_embedding(emb, labels, 'UMAP Embedding', out_dir / 'umap.png', dataset.classes)
+                sil = _safe_silhouette(emb, labels)
+                title = 'UMAP Embedding' + ('' if sil is None else f' (sil={sil:.3f})')
+                plot_embedding(emb, labels, title, out_dir / 'umap.png', dataset.classes)
+                knn_acc = _knn_overall_accuracy(emb, labels, k=10)
+                _plot_knn_overall(knn_acc, 'UMAP kNN accuracy', out_dir / 'umap_knn.png')
+                with open(out_dir / 'umap_metrics.json', 'w', encoding='utf-8') as f:
+                    json.dump({'silhouette': sil, 'knn_acc@10': knn_acc}, f, indent=2)
         # PCA direct plot
         if args.do_pca:
             pca2 = PCA(n_components=2, random_state=args.seed).fit_transform(features)
             np.save(out_dir / 'pca2.npy', pca2)
-            plot_embedding(pca2, labels, 'PCA (2D)', out_dir / 'pca2.png', dataset.classes)
+            sil = _safe_silhouette(pca2, labels)
+            title = 'PCA (2D)' + ('' if sil is None else f' (sil={sil:.3f})')
+            plot_embedding(pca2, labels, title, out_dir / 'pca2.png', dataset.classes)
+            knn_acc = _knn_overall_accuracy(pca2, labels, k=10)
+            _plot_knn_overall(knn_acc, 'PCA(2D) kNN accuracy', out_dir / 'pca2_knn.png')
+            with open(out_dir / 'pca2_metrics.json', 'w', encoding='utf-8') as f:
+                json.dump({'silhouette': sil, 'knn_acc@10': knn_acc}, f, indent=2)
         # k-mid
         if args.do_kmid:
             centers, reps = k_mid_selection(features, args.kmid_k, args.seed)
@@ -922,6 +1058,66 @@ def main():
         wrong_base = preds_base != labels_eval
         chosen_mask = np.logical_and(correct_pkb, wrong_base)
         chosen_indices = [eval_indices[i] for i, flag in enumerate(chosen_mask) if flag]
+
+        # t-SNE comparison: select classes where PKB accuracy > Base accuracy
+        if args.do_tsne:
+            from collections import defaultdict
+            class_total = defaultdict(int)
+            class_correct_base = defaultdict(int)
+            class_correct_pkb = defaultdict(int)
+            for y_true, yb, yp in zip(labels_eval, preds_base, preds_pkb):
+                c = int(y_true)
+                class_total[c] += 1
+                if yb == y_true:
+                    class_correct_base[c] += 1
+                if yp == y_true:
+                    class_correct_pkb[c] += 1
+            better_classes = []
+            for c in class_total.keys():
+                tb = class_total[c]
+                if tb <= 0:
+                    continue
+                acc_b = class_correct_base[c] / tb
+                acc_p = class_correct_pkb[c] / tb
+                if acc_p > acc_b:
+                    better_classes.append(c)
+            if len(better_classes) == 0:
+                print('t-SNE compare: no classes where PKB > Base; skipping t-SNE comparison.')
+            else:
+                better_set = set(better_classes)
+                sel_indices = [idx for idx, y in zip(eval_indices, labels_eval) if int(y) in better_set]
+                # Build loaders for selected indices
+                subset_sel = torch.utils.data.Subset(dataset, sel_indices)
+                loader_sel = DataLoader(subset_sel, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
+                # Features for both models
+                feats_b, labels_b = extract_features(model_base, loader_sel, device, layer=args.feature_layer, max_samples=-1)
+                feats_p, labels_p = extract_features(model_pkb, loader_sel, device, layer=args.feature_layer, max_samples=-1)
+                # Optional PCA before t-SNE
+                if args.pca_dim > 0:
+                    feats_b_p = apply_pca(feats_b, args.pca_dim)
+                    feats_p_p = apply_pca(feats_p, args.pca_dim)
+                else:
+                    feats_b_p, feats_p_p = feats_b, feats_p
+                X = np.vstack([feats_b_p, feats_p_p])
+                model_flags = np.concatenate([np.zeros(len(feats_b_p), dtype=int), np.ones(len(feats_p_p), dtype=int)])
+                labels_comb = np.concatenate([labels_b, labels_p])
+                emb = embed_tsne(X, seed=args.seed)
+                out_root = Path(args.out_dir) / 'compare' / 'tsne'
+                ensure_dir(out_root)
+                np.save(out_root / 'tsne_compare.npy', emb)
+                sil_overall = _safe_silhouette(emb, labels_comb)
+                title = 't-SNE Compare (PKB>Base classes)'
+                if sil_overall is not None:
+                    title += f' (sil={sil_overall:.3f})'
+                plot_embedding_compare(emb, labels_comb, model_flags, dataset.classes, title, out_root / 'tsne_compare.png')
+                # kNN (overall per model on their own embeddings)
+                emb_b = emb[:len(feats_b_p)]
+                emb_p = emb[len(feats_b_p):]
+                acc_b = _knn_overall_accuracy(emb_b, labels_b, k=10)
+                acc_p = _knn_overall_accuracy(emb_p, labels_p, k=10)
+                _plot_knn_compare(acc_b, acc_p, 't-SNE Compare kNN', out_root / 'tsne_compare_knn.png')
+                with open(out_root / 'tsne_compare_metrics.json', 'w', encoding='utf-8') as f:
+                    json.dump({'silhouette_overall': sil_overall, 'knn_acc_base@10': acc_b, 'knn_acc_pkb@10': acc_p, 'better_classes': [int(c) for c in better_classes]}, f, indent=2)
 
         out_root = Path(args.out_dir) / 'compare'
         base_out = out_root / 'base'
