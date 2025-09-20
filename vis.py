@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import List, Tuple, Optional, Dict
 
 import numpy as np
+import random
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -63,6 +64,20 @@ def build_val_transform(resize_side: int, crop: int):
     return transforms.Compose([
         transforms.Resize((resize_side, resize_side)),
         transforms.CenterCrop(crop),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+
+
+def build_aug_transform(resize_side: int, crop: int):
+    """Build a light augmentation pipeline for test-time visualization expansion.
+    Keeps output size consistent while adding randomness. Applied only when --aug-multiplier > 1.
+    """
+    return transforms.Compose([
+        transforms.Resize((resize_side, resize_side)),
+        transforms.RandomResizedCrop(crop, scale=(0.8, 1.0), ratio=(0.9, 1.1)),
+        transforms.RandomHorizontalFlip(p=0.5),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.05),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
@@ -893,6 +908,7 @@ def parse_args():
     # visualization controls
     p.add_argument('--top-k', type=int, default=10, help='Top-K classes to select when comparing two models')
     p.add_argument('--marker-size', type=int, default=18, help='Marker size for scatter plots')
+    p.add_argument('--aug-multiplier', type=int, default=1, help='When >1, duplicate each test sample K times with random augmentations for embedding plots')
     # k-mid (representative selection via k-means)
     p.add_argument('--do-kmid', action='store_true')
     p.add_argument('--kmid-k', type=int, default=16)
@@ -938,6 +954,7 @@ def main():
     args = parse_args()
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
+    random.seed(args.seed)
     device = torch.device(args.device)
 
     # dataset
@@ -985,7 +1002,16 @@ def main():
         if args.checkpoint is None:
             raise ValueError('Embeddings requested: please provide --checkpoint for single-model mode (omit --compare-two-models).')
         model_single = load_model(args, num_classes).to(device)
-        features, labels = extract_features(model_single, loader, device, layer=args.feature_layer, max_samples=-1)
+        # If augmentation multiplier > 1, build an augmented dataset with repeated indices
+        if args.aug_multiplier > 1:
+            aug_tf = build_aug_transform(args.resize_side, args.train_crop)
+            dataset_aug = UFGVCDataset(dataset_name=args.dataset, root=args.data_root, split=args.split, transform=aug_tf)
+            indices_aug = base_indices * args.aug_multiplier
+            subset_aug = torch.utils.data.Subset(dataset_aug, indices_aug)
+            loader_emb = DataLoader(subset_aug, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
+        else:
+            loader_emb = loader
+        features, labels = extract_features(model_single, loader_emb, device, layer=args.feature_layer, max_samples=-1)
         # optional PCA pre-processing (except pure PCA visualization which will be handled later)
         if args.pca_dim > 0 and (args.do_tsne or args.do_umap):
             features_pca = apply_pca(features, args.pca_dim)
@@ -1089,11 +1115,21 @@ def main():
             sel_indices = [idx for idx, y in zip(eval_indices, labels_eval) if int(y) in cls_set]
             subset_sel = torch.utils.data.Subset(dataset, sel_indices)
             loader_sel = DataLoader(subset_sel, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
+            # Build augmented selection loader if requested (affects embeddings only)
+            if args.aug_multiplier > 1:
+                aug_tf = build_aug_transform(args.resize_side, args.train_crop)
+                dataset_aug_sel = UFGVCDataset(dataset_name=args.dataset, root=args.data_root, split=args.split, transform=aug_tf)
+                sel_indices_aug = sel_indices * args.aug_multiplier
+                subset_sel_aug = torch.utils.data.Subset(dataset_aug_sel, sel_indices_aug)
+                loader_sel_aug = DataLoader(subset_sel_aug, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
+            else:
+                loader_sel_aug = None
 
             def _embed_and_plot(model_obj: nn.Module, tag: str, do_tsne: bool, do_um: bool, do_pca2: bool):
                 out_root = Path(args.out_dir) / 'compare' / tag
                 ensure_dir(out_root)
-                feats, labs = extract_features(model_obj, loader_sel, device, layer=args.feature_layer, max_samples=-1)
+                use_loader = loader_sel_aug if loader_sel_aug is not None else loader_sel
+                feats, labs = extract_features(model_obj, use_loader, device, layer=args.feature_layer, max_samples=-1)
                 # t-SNE
                 if do_tsne:
                     feats_p = apply_pca(feats, args.pca_dim) if args.pca_dim > 0 else feats
