@@ -77,7 +77,6 @@ def build_aug_transform(resize_side: int, crop: int):
         transforms.Resize((resize_side, resize_side)),
         transforms.RandomResizedCrop(crop, scale=(0.8, 1.0), ratio=(0.9, 1.1)),
         transforms.RandomHorizontalFlip(p=0.5),
-        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.05),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
