@@ -1060,7 +1060,7 @@ def main():
         chosen_mask = np.logical_and(correct_pkb, wrong_base)
         chosen_indices = [eval_indices[i] for i, flag in enumerate(chosen_mask) if flag]
 
-        # Embedding comparison (Base vs PKB): use top-5 classes by PKB accuracy, and output separate images for Base/PKB
+        # Embedding comparison (Base vs PKB): use top-10 classes by PKB accuracy, and output separate images for Base/PKB
         from collections import defaultdict
         class_total = defaultdict(int)
         class_correct_pkb = defaultdict(int)
@@ -1069,16 +1069,16 @@ def main():
             class_total[c] += 1
             if yp == y_true:
                 class_correct_pkb[c] += 1
-        # compute PKB per-class accuracy and pick top-5
+        # compute PKB per-class accuracy and pick top-10
         class_acc_pkb = []
         for c in class_total.keys():
             if class_total[c] > 0:
                 class_acc_pkb.append((c, class_correct_pkb[c] / class_total[c]))
         class_acc_pkb.sort(key=lambda x: x[1], reverse=True)
-        top_k = 5
+        top_k = 10
         top_classes = [c for c, _ in class_acc_pkb[:top_k]]
         if len(top_classes) == 0:
-            print('Compare embeddings: no classes available to compare (top-5 selection empty).')
+            print('Compare embeddings: no classes available to compare (top-10 selection empty).')
         else:
             cls_set = set(top_classes)
             sel_indices = [idx for idx, y in zip(eval_indices, labels_eval) if int(y) in cls_set]
