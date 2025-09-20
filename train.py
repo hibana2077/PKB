@@ -165,6 +165,8 @@ def parse_args():
     p.add_argument('--save-best', action='store_true')
     p.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')
     p.add_argument('--multi-gpu', action='store_true', help='Use DataParallel over all available GPUs')
+    p.add_argument('--stop-at-top1', type=float, default=None,
+                   help='Early stop when validation top-1 accuracy >= this value (e.g., 0.90)')
     return p.parse_args()
 
 def main():
@@ -208,6 +210,10 @@ def main():
             state_dict = model.module.state_dict() if hasattr(model,'module') else model.state_dict()
             torch.save({'model':state_dict, 'args':vars(args), 'best_top1':best_top1, 'epoch':epoch}, save_path)
             print(f'  New best top1 {best_top1:.3f} -> saved to {save_path}')
+        # Early stop when hitting target validation top-1
+        if args.stop_at_top1 is not None and val_top1 >= args.stop_at_top1:
+            print(f'Early stopping: target Val@1 {args.stop_at_top1:.3f} reached at epoch {epoch}.')
+            break
     history_path = Path(args.output)/f'history_{args.model}_{args.dataset}.json'
     with open(history_path,'w',encoding='utf-8') as f: json.dump(history,f,indent=2)
     print(f'History written to {history_path}')
