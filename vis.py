@@ -890,6 +890,9 @@ def parse_args():
     p.add_argument('--do-pca', action='store_true')
     p.add_argument('--pca-dim', type=int, default=50)
     p.add_argument('--seed', type=int, default=42)
+    # visualization controls
+    p.add_argument('--top-k', type=int, default=10, help='Top-K classes to select when comparing two models')
+    p.add_argument('--marker-size', type=int, default=18, help='Marker size for scatter plots')
     # k-mid (representative selection via k-means)
     p.add_argument('--do-kmid', action='store_true')
     p.add_argument('--kmid-k', type=int, default=16)
@@ -1000,7 +1003,7 @@ def main():
             emb = embed_tsne(features_pca, seed=args.seed)
             np.save(out_dir / 'tsne.npy', emb)
             # image only (no title, no sil shown on figure)
-            plot_embedding(emb, labels, '', out_dir / 'tsne.png', dataset.classes)
+            plot_embedding(emb, labels, '', out_dir / 'tsne.png', dataset.classes, marker_size=args.marker_size)
             # metrics (still saved separately)
             sil = _safe_silhouette(emb, labels)
             knn_acc = _knn_overall_accuracy(emb, labels, k=10)
@@ -1015,7 +1018,7 @@ def main():
                 emb = embed_umap(features_pca, seed=args.seed)
                 np.save(out_dir / 'umap.npy', emb)
                 # image only
-                plot_embedding(emb, labels, '', out_dir / 'umap.png', dataset.classes)
+                plot_embedding(emb, labels, '', out_dir / 'umap.png', dataset.classes, marker_size=args.marker_size)
                 sil = _safe_silhouette(emb, labels)
                 knn_acc = _knn_overall_accuracy(emb, labels, k=10)
                 _plot_knn_overall(knn_acc, 'UMAP kNN accuracy', out_dir / 'umap_knn.png')
@@ -1026,7 +1029,7 @@ def main():
             pca2 = PCA(n_components=2, random_state=args.seed).fit_transform(features)
             np.save(out_dir / 'pca2.npy', pca2)
             # image only
-            plot_embedding(pca2, labels, '', out_dir / 'pca2.png', dataset.classes)
+            plot_embedding(pca2, labels, '', out_dir / 'pca2.png', dataset.classes, marker_size=args.marker_size)
             sil = _safe_silhouette(pca2, labels)
             knn_acc = _knn_overall_accuracy(pca2, labels, k=10)
             _plot_knn_overall(knn_acc, 'PCA(2D) kNN accuracy', out_dir / 'pca2_knn.png')
@@ -1075,7 +1078,9 @@ def main():
             if class_total[c] > 0:
                 class_acc_pkb.append((c, class_correct_pkb[c] / class_total[c]))
         class_acc_pkb.sort(key=lambda x: x[1], reverse=True)
-        top_k = 10
+        top_k = args.top_k if getattr(args, 'top_k', None) is not None else 10
+        if top_k <= 0:
+            top_k = len(class_acc_pkb)
         top_classes = [c for c, _ in class_acc_pkb[:top_k]]
         if len(top_classes) == 0:
             print('Compare embeddings: no classes available to compare (top-10 selection empty).')
@@ -1094,7 +1099,7 @@ def main():
                     feats_p = apply_pca(feats, args.pca_dim) if args.pca_dim > 0 else feats
                     emb = embed_tsne(feats_p, seed=args.seed)
                     np.save(out_root / 'tsne.npy', emb)
-                    plot_embedding(emb, labs, '', out_root / 'tsne.png', dataset.classes)
+                    plot_embedding(emb, labs, '', out_root / 'tsne.png', dataset.classes, marker_size=args.marker_size)
                     sil = _safe_silhouette(emb, labs)
                     knn = _knn_overall_accuracy(emb, labs, k=10)
                     _plot_knn_overall(knn, f'{tag} t-SNE kNN', out_root / 'tsne_knn.png')
@@ -1108,7 +1113,7 @@ def main():
                         feats_p = apply_pca(feats, args.pca_dim) if args.pca_dim > 0 else feats
                         emb = embed_umap(feats_p, seed=args.seed)
                         np.save(out_root / 'umap.npy', emb)
-                        plot_embedding(emb, labs, '', out_root / 'umap.png', dataset.classes)
+                        plot_embedding(emb, labs, '', out_root / 'umap.png', dataset.classes, marker_size=args.marker_size)
                         sil = _safe_silhouette(emb, labs)
                         knn = _knn_overall_accuracy(emb, labs, k=10)
                         _plot_knn_overall(knn, f'{tag} UMAP kNN', out_root / 'umap_knn.png')
@@ -1118,7 +1123,7 @@ def main():
                 if do_pca2:
                     p2 = PCA(n_components=2, random_state=args.seed).fit_transform(feats)
                     np.save(out_root / 'pca2.npy', p2)
-                    plot_embedding(p2, labs, '', out_root / 'pca2.png', dataset.classes)
+                    plot_embedding(p2, labs, '', out_root / 'pca2.png', dataset.classes, marker_size=args.marker_size)
                     sil = _safe_silhouette(p2, labs)
                     knn = _knn_overall_accuracy(p2, labs, k=10)
                     _plot_knn_overall(knn, f'{tag} PCA(2D) kNN', out_root / 'pca2_knn.png')
